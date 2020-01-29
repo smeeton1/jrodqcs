@@ -1,25 +1,47 @@
 
 
-include("component_def.jl")
+include("jlsrc/component_def.jl")
+include("jlsrc/parcing.jl")
 
 using ITensors
-# To install itensor I had to use the lines: 
-# using Pkg
-# Pkg.clone("https://github.com/ITensor/ITensors.jl","ITensors")
-#
-# Itensor requires the packages LinearAlgebra, Printf, Random, Reexport, StaticArrays, and TimerOutputs.
-# These packages can be added usiung Pkg.add("package")
 
 
-#  
-# 
-# Input
-# 
-#  |Q1> -- H -- X -- Cnot -- X -- XM
-#                      |
-#  |Q2> --   --   -- Cnot -- H -- XM
+##
 #
+# getting command line arguments and reading input file
 #
+##
+
+fname = []
+oname = []
+verbous = false
+
+ 
+for i=1:size(ARGS,1)
+ if ARGS[i] == "-f"
+   i=i+1
+   push!(fname,ARGS[i])
+ elseif ARGS[i] == "-h"
+   println("This is a pregame to perform a tensor simulation of a  quantum circuit.")
+   println("-h displays this help message.")
+   println("-f is followed by input file name.")
+   println("-o is followed by output file name old files will be over written.")
+   println("-v turns on verbose running.")
+   
+   exit()
+ elseif ARGS[i] == "-o"
+   i=i+1
+   push!(oname,ARGS[i])
+ elseif ARGS[i] == "-v"
+   verbous = true
+ end 
+end 
+
+
+if !isempty(fname)
+  a=Read_InPutFile(fname)
+end
+
 
 ##
 #
@@ -27,12 +49,12 @@ using ITensors
 #
 ##
 
-
-# Indexes for the first qubit Q1
-i =Index(4,"i"); j =Index(4,"j"); 
-
-# Indexes for the second qubit Q2
-k =Index(4,"k"); l =Index(4,"l");
+if check_str(a[1])
+    I=Index_setup(parse(Int64,a[1]))
+else
+    println("First line is not number of qubits.")
+    exit()
+end
 
 
 ##

@@ -3,7 +3,7 @@ module parcing
 
 using ITensors
 
-export Read_InPutFile, Read_InPutLine
+export Read_InPutFile, Read_InPutLine, Index_setup, check_str
 
 function check_str(a)
     try
