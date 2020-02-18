@@ -1,11 +1,43 @@
-#include("../../ITensors.jl/src/ITensors.jl")
-module component_def
 
-# include("~/code/ITensors.jl/src/ITensors.jl")
+module component_def
 
 using ITensors
 
-export HGate, XGate, CNotGate, XMeasure, ZMeasure
+export Init_st, HGate, XGate, CNotGate, XMeasure, ZMeasure, RxGate, RyGate, RzGate, YGate, ZGate, YMeasure, Project1, Project0, Trace
+
+
+function Init_st(i::Index,a)
+  A = ITensor(i)
+  if isa(a,Array)
+  A[i(1)]=parse(ComplexF64,a[1])
+  if size(a,1)>=2
+    A[i(2)]=parse(ComplexF64,a[2])
+        if size(a,1)>=3
+            A[i(3)]=parse(ComplexF64,a[3])
+                if size(a,1)>=4
+                    A[i(4)]=parse(ComplexF64,a[4])
+                else
+                    A[i(4)]= 0.0 + 0.0im
+                end
+        else
+            A[i(3)]= 0.0 + 0.0im
+            A[i(4)]= 0.0 + 0.0im
+        end
+  else
+    A[i(2)]= 0.0 + 0.0im
+    A[i(3)]= 0.0 + 0.0im
+    A[i(4)]= 0.0 + 0.0im
+  end
+  else
+   A[i(1)]=parse(ComplexF64,a)
+   A[i(2)]= 0.0 + 0.0im
+   A[i(3)]= 0.0 + 0.0im
+   A[i(4)]= 0.0 + 0.0im
+  end 
+
+  return A
+  
+end
 
 
 function HGate(i::Index, j::Index)
