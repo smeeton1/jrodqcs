@@ -61,136 +61,70 @@ function Tensor_Setup(N,d,a)
  Ham=[]
  for i=N+2:size(a,1)
    if a[i][1] == "H"
-     if !isempty(Ham)
-       if hasinds(Ham[end],d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2])&&(order(Ham[end])==2)
-         Ham[end]=Ham[end]+HGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2])
-       else
-         push!(Ham,HGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
-       end
-     else
+
        push!(Ham,HGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
-     end
+     
    end
    
    if a[i][1] == "X"
-     if !isempty(Ham)
-       if hasinds(Ham[end],d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2])&&(order(Ham[end])==2)
-         Ham[end]=Ham[end]+XGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2])
-       else
-         push!(Ham,XGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
-       end
-     else
+
        push!(Ham,XGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
-     end
+     
    end
    
    if a[i][1] == "CN"
-     if !isempty(Ham)
-       if hasinds(Ham[end],d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2],d[parse(Int64,a[i][3]),1],d[parse(Int64,a[i][3]),2])&&(order(Ham[end])==4)
-         Ham[end]=Ham[end]+CNotGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2],d[parse(Int64,a[i][3]),1],d[parse(Int64,a[i][3]),2])
-       else
-         push!(Ham,CNotGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2],d[parse(Int64,a[i][3]),1],d[parse(Int64,a[i][3]),2]) )
-       end
-     else
+
        push!(Ham,CNotGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2],d[parse(Int64,a[i][3]),1],d[parse(Int64,a[i][3]),2]) )
-     end
+     
     end
 
  
    if a[i][1] == "Y"
-     if !isempty(Ham)
-       if hasinds(Ham[end],d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2])&&(order(Ham[end])==2)
-         Ham[end]=Ham[end]+YGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2])
-       else
-         push!(Ham,YGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
-       end
-     else
+
        push!(Ham,YGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
-     end
+     
    end
    
    if a[i][1] == "Z"
-     if !isempty(Ham)
-       if hasinds(Ham[end],d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2])&&(order(Ham[end])==2)
-         Ham[end]=Ham[end]+ZGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2])
-       else
-         push!(Ham,ZGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
-       end
-     else
+
        push!(Ham,ZGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
-     end
+     
    end
    
    if a[i][1] == "Rx"
-     if !isempty(Ham)
-       if hasinds(Ham[end],d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2])&&(order(Ham[end])==2)
-         Ham[end]=Ham[end]+RxGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2])
-       else
-         push!(Ham,RxGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
-       end
-     else
+
        push!(Ham,RxGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
-     end
+     
    end
    
    if a[i][1] == "Ry"
-     if !isempty(Ham)
-       if hasinds(Ham[end],d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2])&&(order(Ham[end])==2)
-         Ham[end]=Ham[end]+RyGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2])
-       else
-         push!(Ham,RyGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
-       end
-     else
+
        push!(Ham,RyGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
-     end
+     
    end
    
    if a[i][1] == "Rz"
-     if !isempty(Ham)
-       if hasinds(Ham[end],d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2])&&(order(Ham[end])==2)
-         Ham[end]=Ham[end]+RzGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2])
-       else
-         push!(Ham,RzGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
-       end
-     else
+
        push!(Ham,RzGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
-     end
+     
    end
    
    if a[i][1] == "XM"
-     if !isempty(Ham)
-       if hasinds(Ham[end],d[parse(Int64,a[i][2]),1])&&(order(Ham[end])==1)
-         Ham[end]=Ham[end]+XMeasure(d[parse(Int64,a[i][2]),1])
-       else
-         push!(Ham,XMeasure(d[parse(Int64,a[i][2]),1] )
-       end
-     else
+
        push!(Ham,XMeasure(d[parse(Int64,a[i][2]),1]) )
-     end
+     
    end
    
    if a[i][1] == "YM"
-     if !isempty(Ham)
-       if hasinds(Ham[end],d[parse(Int64,a[i][2]),1])&&(order(Ham[end])==1)
-         Ham[end]=Ham[end]+YMeasure(d[parse(Int64,a[i][2]),1])
-       else
-         push!(Ham,YMeasure(d[parse(Int64,a[i][2]),1] )
-       end
-     else
+     
        push!(Ham,YMeasure(d[parse(Int64,a[i][2]),1]) )
-     end
+     
    end
    
    if a[i][1] == "ZM"
-     if !isempty(Ham)
-       if hasinds(Ham[end],d[parse(Int64,a[i][2]),1])&&(order(Ham[end])==1)
-         Ham[end]=Ham[end]+ZMeasure(d[parse(Int64,a[i][2]),1])
-       else
-         push!(Ham,ZMeasure(d[parse(Int64,a[i][2]),1] )
-       end
-     else
+     
        push!(Ham,ZMeasure(d[parse(Int64,a[i][2]),1]) )
-     end
+     
    end
    
  end
