@@ -7,7 +7,7 @@ export Init_st, HGate, XGate, CNotGate, XMeasure, ZMeasure, RxGate, RyGate, RzGa
 
 
 function Init_st(i::Index,a)
-  A = ITensor(i)
+  A = ITensor(ComplexF64,i)
   if isa(a,Array)
   A[i(1)]=parse(ComplexF64,a[1])
   if size(a,1)>=2
@@ -41,7 +41,7 @@ end
 
 
 function HGate(i::Index, j::Index)
-  A = ITensor(i,j)
+  A = ITensor(ComplexF64,i,j)
 
   A[i(1),j(1)]=1.0/2.0
   A[i(1),j(2)]=1.0/2.0
@@ -65,7 +65,7 @@ function HGate(i::Index, j::Index)
 end 
 
 function XGate(i::Index, j::Index)
-  A = ITensor(i,j)
+  A = ITensor(ComplexF64,i,j)
 
   A[i(1),j(4)]=1
   A[i(2),j(3)]=1
@@ -77,7 +77,7 @@ function XGate(i::Index, j::Index)
 end 
 
 function YGate(i::Index, j::Index)
-  A = ITensor(i,j)
+  A = ITensor(ComplexF64,i,j)
 
   A[i(1),j(4)]=1
   A[i(2),j(3)]=-1
@@ -89,7 +89,7 @@ function YGate(i::Index, j::Index)
 end 
 
 function ZGate(i::Index, j::Index)
-  A = ITensor(i,j)
+  A = ITensor(ComplexF64,i,j)
 
   A[i(1),j(1)]=1
   A[i(2),j(2)]=-1
@@ -101,7 +101,7 @@ function ZGate(i::Index, j::Index)
 end 
 
 function CNotGate(i::Index, j::Index, k::Index, l::Index)
-  A = ITensor(i,j,k,l)
+  A = ITensor(ComplexF64,i,j,k,l)
 
   A[i(1),j(1),k(1),l(1)]=1
   A[i(1),j(2),k(1),l(2)]=1
@@ -125,7 +125,7 @@ function CNotGate(i::Index, j::Index, k::Index, l::Index)
 end 
 
 function RxGate(i::Index, j::Index, Phase)
-  A = ITensor(i,j)
+  A = ITensor(ComplexF64,i,j)
 
   A[i(1), j(1)] = pow(cos(Phase / 2.0), 2)
   A[i(1), j(2)] = (sin(Phase) / 2.0)im
@@ -149,7 +149,7 @@ function RxGate(i::Index, j::Index, Phase)
 end 
 
 function RyGate(i::Index, j::Index, Phase)
-  A = ITensor(i,j)
+  A = ITensor(ComplexF64,i,j)
 
   A[i(1), j(1)] = pow(cos(Phase / 2.0), 2)
   A[i(1), j(2)] = sin(Phase) / 2.0
@@ -173,7 +173,7 @@ function RyGate(i::Index, j::Index, Phase)
 end 
 
 function RzGate(i::Index, j::Index, Phase)
-  A = ITensor(i,j)
+  A = ITensor(ComplexF64,i,j)
 
   A[i(1), j(1)] = 1.0
   A[i(2), j(2)] = cos(Phase) -1.0 * sin(Phase)im
@@ -192,7 +192,7 @@ end
 ##
 
 function XMeasure(i::Index)
-  A = ITensor(i)
+  A = ITensor(ComplexF64,i)
 
   A[i(2)]=1
   A[i(3)]=1
@@ -202,7 +202,7 @@ function XMeasure(i::Index)
 end 
 
 function ZMeasure(i::Index)
-  A = ITensor(i)
+  A = ITensor(ComplexF64,i)
 
   A[i(1)]=1
   A[i(4)]=-1
@@ -212,7 +212,7 @@ function ZMeasure(i::Index)
 end 
 
 function YMeasure(i::Index)
-  A = ITensor(i)
+  A = ITensor(ComplexF64,i)
 
   A[i(2)]=1im
   A[i(3)]=-1im
@@ -222,7 +222,7 @@ function YMeasure(i::Index)
 end 
 
 function Project1(i::Index)
-  A = ITensor(i)
+  A = ITensor(ComplexF64,i)
 
   A[i(4)]=1
 
@@ -231,7 +231,7 @@ function Project1(i::Index)
 end 
 
 function Project0(i::Index)
-  A = ITensor(i)
+  A = ITensor(ComplexF64,i)
 
   A[i(1)]=1
 
@@ -240,7 +240,7 @@ function Project0(i::Index)
 end 
 
 function Trace(i::Index)
-  A = ITensor(i)
+  A = ITensor(ComplexF64,i)
 
   A[i(1)]=1
   A[i(4)]=1
