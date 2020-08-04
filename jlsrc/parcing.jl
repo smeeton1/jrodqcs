@@ -200,7 +200,6 @@ end
 function Ten_Add(Tens)
  fin=[]
  N = size(Tens,1)
- println("Add N=",N)
  re=[]
  #append!(fin,Tens[1])
  append!(re,0)
@@ -215,7 +214,6 @@ function Ten_Add(Tens)
    ad = true
    j=i+1
    while ad
-    println("j=",j)
     if j>N
       ad = false
       
@@ -243,15 +241,12 @@ end
 function Ten_split(T)
  fin=[]
  N = size(T,1)
- println("Split N=",N)
  for i=1:N
- println(order(T[i]))
   if order(T[i])>2
    index=inds(T[i])
    U,S,V =svd(T[i],(index[1],index[2])) 
    U=U*S
    push!(fin,U)
-   println(order(V))
    while order(V)>3
     index=inds(V)
     n=size(index,1)
