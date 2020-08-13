@@ -5,6 +5,11 @@ using ITensors
 
 export Init_st, HGate, XGate, CNotGate, XMeasure, ZMeasure, RxGate, RyGate, RzGate, YGate, ZGate, YMeasure, Project1, Project0, Trace
 
+verbose = false
+solver  = "simple"
+
+set_verbose(v) = (global verbose = v)
+set_solver(v)  = (global solver = v)
 
 function Init_st(i::Index,a)
   A = ITensor(ComplexF64,i)
@@ -28,11 +33,31 @@ function Init_st(i::Index,a)
     A[i(3)]= 0.0 + 0.0im
     A[i(4)]= 0.0 + 0.0im
   end
-  else
-   A[i(1)]=parse(ComplexF64,a)
-   A[i(2)]= 0.0 + 0.0im
-   A[i(3)]= 0.0 + 0.0im
-   A[i(4)]= 0.0 + 0.0im
+  else 
+   if parse(ComplexF64,a) == 1
+    A[i(1)]= 1.0 + 0.0im
+    A[i(2)]= 0.0 + 0.0im
+    A[i(3)]= 0.0 + 0.0im
+    A[i(4)]= 0.0 + 0.0im
+   end
+   if parse(ComplexF64,a) == 0
+    A[i(1)]= 0.0 + 0.0im
+    A[i(2)]= 0.0 + 0.0im
+    A[i(3)]= 0.0 + 0.0im
+    A[i(4)]= 1.0 + 0.0im
+   end
+   if a == '+'
+    A[i(1)]= 0.0 + 0.0im
+    A[i(2)]= 0.0 + 0.0im
+    A[i(3)]= 0.0 + 0.0im
+    A[i(4)]= 1.0 + 0.0im
+   end
+   if a == '-'
+    A[i(1)]= 0.0 + 0.0im
+    A[i(2)]= 0.0 + 0.0im
+    A[i(3)]= 0.0 + 0.0im
+    A[i(4)]= 1.0 + 0.0im
+   end
   end 
 
   return A
