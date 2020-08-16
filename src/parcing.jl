@@ -6,6 +6,8 @@ include("component_def.jl")
 
 
 export Read_InPutFile, Read_InPutLine, Index_setup, check_str, Tensor_Setup, testing
+export gate_set, set_qinit, measure_set, density_out
+
 
 function testing()
  println("hello")
@@ -61,78 +63,109 @@ function Inital_State(N,d,a)
  return Q
 end
 
-function Tensor_Setup(N,d,a)
- Ham=[]
- for i=N+2:size(a,1)
-   if a[i][1] == "H"
+function gate_set(s,n,d)
 
-       push!(Ham,component_def.HGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
+
+   if s == "H"
+
+       Ham=component_def.HGate(d[n,1],d[n,2]) )
      
    end
    
-   if a[i][1] == "X"
+   if s == "X"
 
-       push!(Ham,component_def.XGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
+       Ham=component_def.XGate(d[n,1],d[n,2]) 
      
    end
    
-   if a[i][1] == "CN"
+   if s == "CN"
 
-       push!(Ham,component_def.CNotGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2],d[parse(Int64,a[i][3]),1],d[parse(Int64,a[i][3]),2]) )
+       Ham=component_def.CNotGate(d[n[1],1],d[n[1],2],d[n[2],1],d[n[2],2]) 
      
     end
 
  
-   if a[i][1] == "Y"
+   if s == "Y"
 
-       push!(Ham,component_def.YGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
+       Ham=component_def.YGate(d[n,1],d[n,2]) 
      
    end
    
-   if a[i][1] == "Z"
+   if s == "Z"
 
-       push!(Ham,component_def.ZGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
+       Ham=component_def.ZGate(d[n,1],d[n,2]) 
      
    end
    
-   if a[i][1] == "Rx"
+   if s == "Rx"
 
-       push!(Ham,component_def.RxGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
+       Ham=component_def.RxGate(d[n,1],d[n,2]) 
      
    end
    
-   if a[i][1] == "Ry"
+   if s == "Ry"
 
-       push!(Ham,component_def.RyGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
+       Ham=component_def.RyGate(d[n,1],d[n,2]) 
      
    end
    
-   if a[i][1] == "Rz"
+   if s == "Rz"
 
-       push!(Ham,component_def.RzGate(d[parse(Int64,a[i][2]),1],d[parse(Int64,a[i][2]),2]) )
+       Ham=component_def.RzGate(d[n,1],d[n,2]) 
      
    end
    
-   if a[i][1] == "XM"
 
-       push!(Ham,component_def.XMeasure(d[parse(Int64,a[i][2]),1]) )
-     
-   end
-   
-   if a[i][1] == "YM"
-     
-       push!(Ham,component_def.YMeasure(d[parse(Int64,a[i][2]),1]) )
-     
-   end
-   
-   if a[i][1] == "ZM"
-     
-       push!(Ham,component_def.ZMeasure(d[parse(Int64,a[i][2]),1]) )
-     
-   end
-   
- end
  return Ham
+end
+
+function measure_set(s,n,d)
+
+   
+   if s == "X"
+
+       Ham=component_def.XMeasure(d[n,1]) 
+     
+   end
+   
+   if s == "Y"
+     
+       Ham=component_def.YMeasure(d[n,1]) 
+     
+   end
+   
+   if s == "Z"
+     
+       Ham=component_def.ZMeasure(d[n,1]) 
+     
+   end
+
+ return Ham
+end
+
+function set_qinit(S,d)
+ Q=ITensor[]
+ for i=1:N
+  push!(Q,component_def.Init_st(d[i,2],S[i]))
+ end
+ return Q
+end
+
+end
+
+function wave_out(T)
+ if sign(T[2]) == 0
+  println(sqrt(T[1]),' ', sqrt(T[4]))
+ else
+  println(sqrt(T[1]),' ', sign(T[2])*sqrt(T[4]))
+ end
+end
+
+function density_out(T)
+
+  println(T[1],' ',T[2])
+  println(T[3],' ',T[4])
+
 end
 
 end

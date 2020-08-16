@@ -4,7 +4,7 @@ using ITensors
 include("component_def.jl")
 
 
-export Ten_Add, Ten_split, line_mps
+export Ten_Add, Ten_split, line_mps, Q_Meas
  
  
  
@@ -135,6 +135,30 @@ function Contract_Lines(Q,T)
   #println("o= ",order(A[j]))
  end
  return A
+
+end
+
+function Q_Meas(Q)
+ i=0
+ while i<30
+  x=bitrand()
+  if x[1]
+   if rand() < abs(Q[1])
+    return 1
+   end
+  else
+   if rand() < abs(Q[4])
+    return 0
+   end
+  end
+  i=i+1
+ end
+ x =bitrand()
+ if x[1]
+    return 1
+ else
+    return 0
+ end
 
 end
 
