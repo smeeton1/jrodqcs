@@ -7,9 +7,11 @@ export Init_st, HGate, XGate, CNotGate, XMeasure, ZMeasure, RxGate, RyGate, RzGa
 
 verbose = false
 solver  = "simple"
+tol     = 1E-6
 
 set_verbose(v) = (global verbose = v)
 set_solver(v)  = (global solver = v)
+set_tol(v)     = (global tol = v)
 
 function Init_st(i::Index,a)
   A = ITensor(ComplexF64,i)
@@ -34,13 +36,13 @@ function Init_st(i::Index,a)
     A[i(4)]= 0.0 + 0.0im
   end
   else 
-   if parse(ComplexF64,a) == 1
+   if a == '1'
     A[i(1)]= 1.0 + 0.0im
     A[i(2)]= 0.0 + 0.0im
     A[i(3)]= 0.0 + 0.0im
     A[i(4)]= 0.0 + 0.0im
    end
-   if parse(ComplexF64,a) == 0
+   if a == '0'
     A[i(1)]= 0.0 + 0.0im
     A[i(2)]= 0.0 + 0.0im
     A[i(3)]= 0.0 + 0.0im

@@ -68,7 +68,7 @@ function gate_set(s,n,d)
 
    if s == "H"
 
-       Ham=component_def.HGate(d[n,1],d[n,2]) )
+       Ham=component_def.HGate(d[n,1],d[n,2]) 
      
    end
    
@@ -143,7 +143,7 @@ function measure_set(s,n,d)
  return Ham
 end
 
-function set_qinit(S,d)
+function set_qinit(S,d,N)
  Q=ITensor[]
  for i=1:N
   push!(Q,component_def.Init_st(d[i,2],S[i]))
@@ -151,9 +151,7 @@ function set_qinit(S,d)
  return Q
 end
 
-end
-
-function wave_out(T)
+function write_wave_out(T)
  if sign(T[2]) == 0
   println(sqrt(T[1]),' ', sqrt(T[4]))
  else
@@ -161,7 +159,7 @@ function wave_out(T)
  end
 end
 
-function density_out(T)
+function write_density_out(T)
 
   println(T[1],' ',T[2])
   println(T[3],' ',T[4])
