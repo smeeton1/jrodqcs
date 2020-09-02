@@ -31,7 +31,13 @@ end
  
  
 function add_gate(T,g,n) 
- push!(T.gates,parcing.gate_set(g,n,T.indexs))
+ if isa(g,Array)
+  for i=1:length(g)
+    push!(T.gates,parcing.gate_set(g[1],n[1],T.indexs))
+  end
+ else
+  push!(T.gates,parcing.gate_set(g,n,T.indexs))
+ end
 end
  
 function add_measure(T,g,n) 
@@ -41,26 +47,46 @@ function add_measure(T,g,n)
 end
  
 function wave_in(T,n) 
-
- parcing.write_wave_out(T.init_state[1][n])
+ if isa(n,Array)
+  for i=1:length(n)
+   parcing.write_wave_out(T.init_state[1][n[i]])
+  end
+ else
+  parcing.write_wave_out(T.init_state[1][n])
+ end
  
 end
  
 function density_in(T,n) 
-
- parcing.write_density_out(T.init_state[1][n])
+ if isa(n,Array)
+  for i=1:length(n)
+     parcing.write_density_out(T.init_state[1][n[i]])
+  end
+ else
+   parcing.write_density_out(T.init_state[1][n])
+ end
  
 end
 
 function wave_out(T,n) 
-
- parcing.write_wave_out(T.out[1][n])
+ if isa(n,Array)
+  for i=1:length(n)
+   parcing.write_wave_out(T.out[1][n[i]])
+  end
+ else
+  parcing.write_wave_out(T.out[1][n])
+ end
  
 end
  
 function density_out(T,n)
-
- parcing.write_density_out(T.out[1][n])
+ if isa(n,Array)
+  for i=1:length(n)
+     parcing.write_density_out(T.out[1][n[i]])
+  end
+ else
+   parcing.write_density_out(T.out[1][n])
+ end
  
 end
  
