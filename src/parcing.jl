@@ -5,8 +5,8 @@ using ITensors
 include("component_def.jl")
 
 
-export Read_InPutFile, Read_InPutLine, Index_setup, check_str, Tensor_Setup, testing
-export gate_set, set_qinit, measure_set, density_out
+export Read_InPutFile, Write_OutPutFile, Index_setup, check_str, Tensor_Setup, testing
+export gate_set, set_qinit, measure_set, density_out, write_wave_out
 
 
 function testing()
@@ -49,9 +49,13 @@ function Read_InPutFile(InPutFile)
 
 end
 
-function Read_InPutLine()
+function Write_OutPutFile(a,OutFile)
 
-
+ open(OutFile, "w") do io
+  for i=1:length(a)
+    write(io,a[i])
+  end
+ end
 
 end
 
@@ -82,7 +86,7 @@ function gate_set(s,n,d)
 
        Ham=component_def.CNotGate(d[n[1],1],d[n[1],2],d[n[2],1],d[n[2],2]) 
      
-    end
+   end
 
  
    if s == "Y"

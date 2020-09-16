@@ -4,7 +4,7 @@ using ITensors
 include("component_def.jl")
 
 
-export Ten_Add, Ten_split, line_mps, Q_Meas
+export Ten_Add, Ten_split, line_mps, Contract_Lines, Contract_Node, Q_Meas 
  
  
  
@@ -136,6 +136,16 @@ function Contract_Lines(Q,T)
  end
  return A
 
+end
+
+function Contract_Node(Q,H,E)
+
+ index=inds(B)
+ for j=1:N
+  A[j]=Par_Trac(B, index[j])
+  #println("o= ",order(A[j]))
+ end
+ return A
 end
 
 function Q_Meas(Q)
