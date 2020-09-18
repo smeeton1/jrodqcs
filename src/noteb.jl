@@ -45,9 +45,26 @@ function Search_edge(T,n)
   end
   return a
 end
- 
+
+function Find_pre_node(n,T)
+   n1=n
+    for k=1:length(T.edge)
+       if n1 == T.edge[k][1] && T.edge[k][2] != T.qubit_N+length(T.gates)
+         indexs=inds(T.gates[T.edge[k][2]-T.qubit_N])
+         for l=1:length(indexs)
+          if (indexs[l]) in inds(T.gates[end]) 
+           n1 = T.edge[k][2]
+          end
+         end
+       end
+       
+    end
+  return n1
+
+end
+
 function Add_gate(T,g,n) 
- if isa(g,Array)
+ if isa(g,Array) 
   for i=1:length(g)
     push!(T.gates,parcing.gate_set(g[i],n[i],T.indexs))
     push!(T.record,[g[i],string(n[i])])
@@ -62,22 +79,10 @@ function Add_gate(T,g,n)
     else
      if isa(n[i],Array)
        for j=1:length(n[i]) 
-         n1=n[i][j]
-         for k=1:length(T.edge)
-          if n1 == T.edge[k][1] && T.edge[i][2] != T.qubit_N+length(T.gates)
-           n1 = T.edge[k][2]
-          end
-         end
-         push!(T.edge,[n1,T.qubit_N+length(T.gates)])
+         push!(T.edge,[Find_pre_node(n[i][j],T),T.qubit_N+length(T.gates)])
        end
      else
-      n1=n[i]
-      for k=1:length(T.edge)
-       if n1 == T.edge[k][1] && T.edge[i][2] != T.qubit_N+length(T.gates)
-         n1 = T.edge[k][2]
-       end
-      end
-      push!(T.edge,[n1,T.qubit_N+length(T.gates)])
+      push!(T.edge,[Find_pre_node(n[i],T),T.qubit_N+length(T.gates)])
      end
     end
   end
@@ -95,22 +100,10 @@ function Add_gate(T,g,n)
   else
    if isa(n,Array)
     for j=1:length(n)
-      n1=n[j]
-      for i=1:length(T.edge)
-       if n1 == T.edge[i][1] && T.edge[i][2] != T.qubit_N+length(T.gates)
-        n1 = T.edge[i][2]
-       end
-      end
-     push!(T.edge,[n1,T.qubit_N+length(T.gates)])
+     push!(T.edge,[Find_pre_node(n[j],T),T.qubit_N+length(T.gates)]);
     end
    else
-    n1=n
-    for i=1:length(T.edge)
-     if n1 == T.edge[i][1] && T.edge[i][2] != T.qubit_N+length(T.gates)
-       n1 = T.edge[i][2]
-     end
-    end
-    push!(T.edge,[n1,T.qubit_N+length(T.gates)])
+    push!(T.edge,[Find_pre_node(n,T),T.qubit_N+length(T.gates)]);
    end
   end
  end
@@ -174,7 +167,7 @@ function Qmeasure_out(T,n)
 end
 
 function Split(T)#push V on to the end of gates so then just need to add edges and not move all nodes
- if solver == "simple"
+ if component_def.solver == "simple"
    Split_L(T)
  else
    Split_N(T)
@@ -182,7 +175,7 @@ function Split(T)#push V on to the end of gates so then just need to add edges a
 end
 
 
-function Split_L(T)#push V on to the end of gates so then just need to add edges and not move all nodes
+function Split_L(T)
  fin=[]
  N = size(T.gates,1)
  hold = ITensor(ComplexF64,T.indexs[1,1])
@@ -211,13 +204,13 @@ function Split_L(T)#push V on to the end of gates so then just need to add edges
  T.gates[:] = fin
 end
 
-function Split_N(T)#push V on to the end of gates so then just need to add edges and not move all nodes
- fin=[]
+function Split_N(T)
+ 
  N = size(T.gates,1)
- hold = ITensor(ComplexF64,T.indexs[1,1])
  for i=1:N
   if order(T.gates[i])>2
    index=inds(T.gates[i])
+   l = Int64(length(index)/2)
    U,S,V =svd(T.gates[i],(index[1],index[2])) 
    U=U*S
    T.gates[i]=U
@@ -229,24 +222,28 @@ function Split_N(T)#push V on to the end of gates so then just need to add edges
     push!(T.gates,U)
    end
    push!(T.gates,V)
-   a=Search_edge(T,i+T.T.qubit_N)
-   l=length(a)/2.0
-   for j=2:2*l
-    if j>=l
-      T.edge[a[j]][2]=length(T.gates)-l+j
-    else #check indexs for other gate
+   a=Search_edge(T,i+T.qubit_N)
+   m=length(T.gates)+T.qubit_N
+   println(a)
+   for j=2:length(a)
+    println(length(a))
+    if j<=l
+      println(T.edge[a[j]])
+      T.edge[a[j]][2]=m-l+j
+    else 
      for k=2:l
-      if inds(T.gates[T.edge[a[j]][2]])==inds(T.gates[length(T.gates)-l+k])
-         T.edge[a[j]][1]=length(T.gates)-l+k
+      indexs=inds(T.gates[T.edge[a[j]][2]-T.qubit_N])
+      if indexs[1] in inds(T.gates[m-l+k-T.qubit_N])
+         T.edge[a[j]][1]=m-l+k
       end
      end
     end
    end
    
-   push!(T.edge,[i,length(length(T.gates))-l+2])
+   push!(T.edge,[i+T.qubit_N,m-l+2])
    if l>2
     for k=2:l-1
-     push!(T.edge,[length(length(T.gates))-l+k,length(length(T.gates))-l+k+1])
+     push!(T.edge,[m-l+k,m-l+k+1])
     end
    end
    
@@ -258,10 +255,10 @@ end
 
 
 function Contract(T)
- if solver == "simple"
+ if component_def.solver == "simple"
   push!(T.out,tensor_fun.Contract_Lines(T.init_state[1],T.gates))
  end
- if solver == "node"
+ if component_def.solver == "node"
   push!(T.out,tensor_fun.Contract_Node(T.init_state[1],T.gates,T.edge))
  end
 

@@ -6,12 +6,14 @@ using ITensors
 export Init_st, HGate, XGate, CNotGate, XMeasure, ZMeasure, RxGate, RyGate, RzGate, YGate, ZGate, YMeasure, Project1, Project0, Trace
 
 verbose = false
-solver  = "simple"
+solver  = "node"
 tol     = 1E-6
+depth   = 0
 
 set_verbose(v) = (global verbose = v)
 set_solver(v)  = (global solver = v)
 set_tol(v)     = (global tol = v)
+set_depth(v)   = (global depth = v)
 
 function Init_st(i::Index,a)
   A = ITensor(ComplexF64,i)
