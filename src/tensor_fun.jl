@@ -138,11 +138,91 @@ function Contract_Lines(Q,T)
 
 end
 
-function Contract_Node(Q,H,E)
+function Search_edge(T,n)
+  a=[]
+  for i=1:length(T)
+   if n in T[i]
+    push!(a,i)
+   end
+  end
+  return a
+end
 
- index=inds(B)
+function Edge_contract(B,H,E,n)
+ i=E[2]-n
+ B=B*H[i]
+end
+
+function Contract_Node(Q,H,E)
+#need to contract by column/ depth
+#need to skip rows when no gate in (check multi row gates to see if skip)
+ N=length(Q)+length(H)
+ n=length(Q)
+ Et=copy(E)
+ Bh=copy(Q)
+ D=0
+ N=[]
+ for i=1:n
+  push!(N,i)
+ end
+ while length(Et)>0
+  a=[]
+  n1=[]
+  for i=1:n
+   push!(a,Search_edge(Et,N[i]))
+  end
+  for i=1:length(a)
+   for j=1:length(a[i])
+     push!(n1,[i,j,ET[a[i][j]][2]])
+   end
+  end
+  for i=1:length(n1)
+    b= Search_edge(Et,n1[i][3])
+    n2=0
+    if length(b)>2
+     for j=1:length(b)
+      for k=1:length(n1)
+       if k!=i && !(n1[i][3] in Et[b(j)])
+        n2=n2+1
+       end
+      end
+     end
+     if n2>1
+      deleteat!(a,[n1[i][1],n1[i][2]])
+     end
+    end
+  end
+  for i=1:length(a)
+      Edge_contract(Bh[i],H,Et[a[i][1]],n)
+      N[i] = ET[a[i][1]][2]
+  end
+  for i=1:length(a)
+     if length(a[i])>1
+      for k=2:length(a[i])
+      for j=1:length(N)
+        if i!=j && N[j] == Et[a[i][k]][2]
+          Bh[i]=Bh[i]*Bh[j]
+          Bh[j]=Bh[i]
+        end
+      end
+      end
+     end
+  end
+  for i=1:length(a)
+   for j=1:length(a[i])
+     deleteat!(Et,a[i][j])
+   end
+  end
+
+  end
+
+ 
+ end
+  
+
+ index=inds(Bh)
  for j=1:N
-  A[j]=Par_Trac(B, index[j])
+  A[j]=Par_Trac(Bh, index[j])
   #println("o= ",order(A[j]))
  end
  return A

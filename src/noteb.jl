@@ -36,15 +36,6 @@ function Set_init(T,s)
 
 end
  
-function Search_edge(T,n)
-  a=[]
-  for i=1:length(T.edge)
-   if n in T.edge[i]
-    push!(a,i)
-   end
-  end
-  return a
-end
 
 function Find_pre_node(n,T)
    n1=n
@@ -222,13 +213,10 @@ function Split_N(T)
     push!(T.gates,U)
    end
    push!(T.gates,V)
-   a=Search_edge(T,i+T.qubit_N)
+   a=tensor_fun.Search_edge(T.edge,i+T.qubit_N)
    m=length(T.gates)+T.qubit_N
-   println(a)
    for j=2:length(a)
-    println(length(a))
     if j<=l
-      println(T.edge[a[j]])
       T.edge[a[j]][2]=m-l+j
     else 
      for k=2:l
