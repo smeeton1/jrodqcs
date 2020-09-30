@@ -148,6 +148,16 @@ function Search_edge(T,n)
   return a
 end
 
+function Search_edge_1(T,n)
+  a=[]
+  for i=1:length(T)
+   if n == T[i][1]
+    push!(a,i)
+   end
+  end
+  return a
+end
+
 function Edge_contract(B,H,E,n)
  i=E[2]-n
  B=B*H[i]
@@ -160,41 +170,59 @@ function Contract_Node(Q,H,E)
  n=length(Q)
  Et=copy(E)
  Bh=copy(Q)
+ println(Et)
  D=0
  N=[]
  for i=1:n
   push!(N,i)
  end
- while length(Et)>0
+ D=1
+ while length(Et)>0 && D < 5
+  println("D=",D)
+  println("N=",N)
+  println("E_L=",length(Et))
+  println(Et)
+  D=D+1
   a=[]
   n1=[]
   for i=1:n
-   push!(a,Search_edge(Et,N[i]))
+   push!(a,Search_edge_1(Et,N[i]))
   end
+  println(a)
+  
   for i=1:length(a)
    for j=1:length(a[i])
-     push!(n1,[i,j,ET[a[i][j]][2]])
+     push!(n1,[i,j,Et[a[i][j]][2]])
    end
   end
+  println(n1)
   for i=1:length(n1)
     b= Search_edge(Et,n1[i][3])
     n2=0
     if length(b)>2
-     for j=1:length(b)
+     for j=2:length(b)
+      println(Et[b[j]])
       for k=1:length(n1)
-       if k!=i && !(n1[i][3] in Et[b(j)])
+       println(k!=i && !(n1[k][3] in Et[b[j]]) )
+       if k!=i && !(n1[k][3] in Et[b[j]])
         n2=n2+1
        end
       end
      end
-     if n2>1
-      deleteat!(a,[n1[i][1],n1[i][2]])
+     println(n2)
+     if n2>3
+      println("hello",n1[i][1],n1[i][2])
+      deleteat!(a[n1[i][1]],[n1[i][2]])
+      println("bye")
      end
     end
   end
+  println(a)
   for i=1:length(a)
+   if length(a[i])>0
       Edge_contract(Bh[i],H,Et[a[i][1]],n)
-      N[i] = ET[a[i][1]][2]
+      N[i] = Et[a[i][1]][2]
+   end
   end
   for i=1:length(a)
      if length(a[i])>1
@@ -208,24 +236,25 @@ function Contract_Node(Q,H,E)
       end
      end
   end
+  l=0
   for i=1:length(a)
-   for j=1:length(a[i])
-     deleteat!(Et,a[i][j])
+   if length(a[i])>0
+    for j=1:length(a[i])
+     deleteat!(Et,(a[i][j]-l))
+     l=l+1
+    end
    end
   end
 
   end
 
- 
- end
   
-
- index=inds(Bh)
- for j=1:N
-  A[j]=Par_Trac(Bh, index[j])
-  #println("o= ",order(A[j]))
+ for i=1:n
+  index=inds(Bh[i])
+  Bh[i]=Par_Trac(Bh[i], index[i])
+    #println("o= ",order(A[j]))
  end
- return A
+ return Bh
 end
 
 function Q_Meas(Q)
