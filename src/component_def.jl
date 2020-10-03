@@ -5,10 +5,10 @@ using ITensors
 
 export Init_st, HGate, XGate, CNotGate, XMeasure, ZMeasure, RxGate, RyGate, RzGate, YGate, ZGate, YMeasure, Project1, Project0, Trace
 
-verbose = false
+verbose = true
 solver  = "node"
 tol     = 1E-6
-depth   = 0
+depth   = 5
 
 set_verbose(v) = (global verbose = v)
 set_solver(v)  = (global solver = v)

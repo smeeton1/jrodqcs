@@ -170,4 +170,39 @@ function write_density_out(T)
 
 end
 
+function isin(A,n)
+ t = false
+ for i=1:length(A)
+   if length(A[i])>1
+    for j=1:length(A[i])
+     if isin(A[i][j],n)
+      t=true
+     end
+    end
+   else
+     if A[i] == n
+      t=true
+     end
+   end
+ end
+ return t
+
+end
+
+function flattenA(A)
+ b=[]
+ for i=1:length(A)
+   if length(A[i])>1
+      for j=1:length(A[i])
+       push!(b,A[i][j])
+      end
+    else
+     push!(b,A[i])
+    end
+   end
+
+ return b
+end
+
+
 end

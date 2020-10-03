@@ -2,6 +2,7 @@ module tensor_fun
 
 using ITensors
 include("component_def.jl")
+include("parcing.jl")
 
 
 export Ten_Add, Ten_split, line_mps, Contract_Lines, Contract_Node, Q_Meas 
@@ -117,11 +118,12 @@ function Par_Trac(T::ITensor, I::Index)
 end
 
 
-function Contract_Lines(Q,T)
+function Contract_Lines(Q,H)
  N=size(Q,1)
  A=[]
+ C=copy(Q)
  for i=1:N
-   push!(A,line_mps(Q[i],T))
+   push!(A,line_mps(C[i],H))
  end
  B=A[1]*A[2]
  for i=3:N
@@ -150,6 +152,7 @@ end
 
 function Search_edge_1(T,n)
   a=[]
+  println(n)
   for i=1:length(T)
    if n == T[i][1]
     push!(a,i)
@@ -161,6 +164,7 @@ end
 function Edge_contract(B,H,E,n)
  i=E[2]-n
  B=B*H[i]
+ return B
 end
 
 function Contract_Node(Q,H,E)
@@ -170,25 +174,36 @@ function Contract_Node(Q,H,E)
  n=length(Q)
  Et=copy(E)
  Bh=copy(Q)
- println(Et)
- D=0
+
  N=[]
  for i=1:n
   push!(N,i)
  end
  D=1
- while length(Et)>0 && D < 5
-  println("D=",D)
-  println("N=",N)
-  println("E_L=",length(Et))
-  println(Et)
+ while length(Et)>0 && D < component_def.depth
+  if component_def.verbose == true
+   println("D=",D)
+   println("N=",N)
+   println("E_L=",length(Et))
+   println("Q_L=", length(Bh))
+   println(Et)
+  end
   D=D+1
   a=[]
   n1=[]
-  for i=1:n
-   push!(a,Search_edge_1(Et,N[i]))
+  rm=0
+  for i=1:length(N)
+   if length(N[i])>1
+    for k=1:length(N[i])
+     push!(a,Search_edge(Et,N[i][k]))
+    end
+   else
+    push!(a,Search_edge(Et,N[i]))
+   end
   end
-  println(a)
+  if component_def.verbose == true
+   println(a)
+  end
   
   for i=1:length(a)
    for j=1:length(a[i])
@@ -201,60 +216,98 @@ function Contract_Node(Q,H,E)
     n2=0
     if length(b)>2
      for j=2:length(b)
-      println(Et[b[j]])
       for k=1:length(n1)
-       println(k!=i && !(n1[k][3] in Et[b[j]]) )
+       #println(k!=i && !(n1[k][3] in Et[b[j]]) )
        if k!=i && !(n1[k][3] in Et[b[j]])
         n2=n2+1
        end
       end
      end
-     println(n2)
+     #println(n2)
      if n2>3
-      println("hello",n1[i][1],n1[i][2])
       deleteat!(a[n1[i][1]],[n1[i][2]])
-      println("bye")
+     else
+     for j=2:length(b)
+      for k=1:length(n1)
+       #println(k!=i && !(n1[k][3] in Et[b[j]]) )
+       if k!=i && (n1[k][3] in Et[b[j]]) && !(b[j] in a)
+         push!(a,b[j])
+       end
+      end
+     end
      end
     end
   end
-  println(a)
+  #println(a)
   for i=1:length(a)
    if length(a[i])>0
-      Edge_contract(Bh[i],H,Et[a[i][1]],n)
-      N[i] = Et[a[i][1]][2]
+     for j=1:length(n1)
+     #println(parcing.isin(N,Et[a[i][1]][2]))
+     if Et[a[i][1]][1] in N[j] && !(parcing.isin(N,Et[a[i][1]][2]) ) #(isassigned(N,Et[a[i][1]][2] ))
+      Bh[j]=Edge_contract(Bh[j],H,Et[a[i][1]],n)
+      if length(N[j]) > 1
+       for k=1:length(N[j])
+        if Et[a[i][1]][1] == N[j][k]
+         N[j][k] = Et[a[i][1]][2]
+        end
+       end
+      else
+        N[j] = Et[a[i][1]][2]
+      end
+     else
+      for k=1:length(N)
+       if j!=k && Et[a[i][1]][1] in N[j] && Et[a[i][1]][2] in N[k]
+         Bh[j]=Bh[j]*Bh[k]
+         N[j]=[N[j],N[k]]
+         deleteat!(Bh,k)
+         rm=rm+1
+         for l=k:length(N)-1
+          N[l]=N[l+1]
+         end
+         #deleteat!(N,k)
+       end
+     end
+     end
+     end
    end
   end
-  for i=1:length(a)
-     if length(a[i])>1
-      for k=2:length(a[i])
-      for j=1:length(N)
-        if i!=j && N[j] == Et[a[i][k]][2]
-          Bh[i]=Bh[i]*Bh[j]
-          Bh[j]=Bh[i]
-        end
-      end
-      end
-     end
+  for i=1:rm
+    pop!(N);
   end
   l=0
   for i=1:length(a)
    if length(a[i])>0
     for j=1:length(a[i])
-     deleteat!(Et,(a[i][j]-l))
-     l=l+1
+     if length(Et)>1
+      deleteat!(Et,(a[i][j]-l))
+      l=l+1
+     else
+      pop!(Et);
+     end
     end
    end
   end
+  for i=1:length(N)
+    if length(N[i])>1
+     N[i]=parcing.flattenA(N[i])
+    end
+  end
 
   end
 
-  
- for i=1:n
+ A=[]
+ for i=1:length(Bh)
   index=inds(Bh[i])
-  Bh[i]=Par_Trac(Bh[i], index[i])
+  if length(index)>1
+   for j=1:length(index)
+    push!(A,Par_Trac(Bh[i], index[j]))
+   end
     #println("o= ",order(A[j]))
+  else
+   push!(A,Bh[i])
+  end
  end
- return Bh
+ return A
 end
 
 function Q_Meas(Q)
