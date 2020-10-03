@@ -1,0 +1,10 @@
+ Current features to be added and worked on
+ 
+ 
+ Sort out way to store and use multiple different initial conditions.
+ Add plotting ability.
+ Set up method to allow for measurements and mid circuit control through measurements.
+ Multi run method with statics of outputs.
+ Set up as julia package.
+ More formats for save and input files.
+ added more contraction methods.
