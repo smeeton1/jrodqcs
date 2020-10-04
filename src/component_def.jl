@@ -1,19 +1,43 @@
+#
+#
+# Contains some basic global variable used through out the code and some basic set up functions
+#
+#
 
 module component_def
 
 using ITensors
 
+export set_verbose, set_solver, set_tol, set_depth
+
 export Init_st, HGate, XGate, CNotGate, XMeasure, ZMeasure, RxGate, RyGate, RzGate, YGate, ZGate, YMeasure, Project1, Project0, Trace
 
-verbose = true
-solver  = "node"
-tol     = 1E-6
-depth   = 5
+##########
+#
+# Global Variables
+#
+##########
 
-set_verbose(v) = (global verbose = v)
-set_solver(v)  = (global solver = v)
-set_tol(v)     = (global tol = v)
-set_depth(v)   = (global depth = v)
+
+verbose = true        # Turns on or off extra output information.
+solver  = "node"      # Chooses the type of solver. (Simple, Node)
+tol     = 1E-6        # Set tolerance for SVD 
+depth   = 1000        # Set maximum depth to be calculated to. If depth is set to higher then circuit depth, 
+                      # the whole circuit will be calculated
+
+set_verbose(v) = (global verbose = v) # Allows for the value of verbose to be changed (true, false)
+set_solver(v)  = (global solver = v)  # Allows for the value of solver to be changed  (Simple, Node)
+set_tol(v)     = (global tol = v)     # Allows for the value of tol to be changed     (float)
+set_depth(v)   = (global depth = v)   # Allows for the value of depth to be changed   (int)
+
+
+##########
+#
+# Sets up the initial conditions for one qubit.
+# Can take an array for the density matrix of the qubit 
+# or the character 1,0,+,- to identify the state of the qubit. 
+#
+##########
 
 function Init_st(i::Index,a)
   A = ITensor(ComplexF64,i)
@@ -67,6 +91,12 @@ function Init_st(i::Index,a)
   return A
   
 end
+
+##########
+#
+# Following are function to set the tensors for the gates. 
+#
+##########
 
 
 function HGate(i::Index, j::Index)

@@ -1,3 +1,9 @@
+#
+#
+# Contains Definition of structures and functions need for notebook functionality. 
+#
+#
+
 module noteb
 
 using ITensors
@@ -9,6 +15,14 @@ include("tensor_fun.jl")
 
 export qc_network, set_init, add_gate, add_measure, wave_in, wave_out, density_in, density_out, qmeasure_out, contract
 export Split_N, Split_T, Split
+
+
+##########
+#
+# Definition of qc_network structure used to store the circuit information for use in a notebook.
+# The structure is initiated using qc_network(q) with q being the number of qubits.
+#
+##########
 
 mutable struct qc_network
 
@@ -24,6 +38,8 @@ mutable struct qc_network
  qc_network(q) = (qubit_N = q, indexs = parcing.Index_setup(q), init_state = [], gates = [], measure = [],out = [], edge = [], record =[[string(q)]])
 end
 
+
+# Sets the initial condition for the networt. Takes network and a string containing initial state.  
 function Set_init(T,s)
  push!(T.init_state,parcing.set_qinit(s,T.indexs,T.qubit_N))
  if length(T.record)<2
@@ -36,14 +52,14 @@ function Set_init(T,s)
 
 end
  
-
+# Finds the node proceeding current node being added. Takes qubit and network. 
 function Find_pre_node(n,T)
    n1=n
     for k=1:length(T.edge)
        if n1 == T.edge[k][1] && T.edge[k][2] != T.qubit_N+length(T.gates)
          indexs=inds(T.gates[T.edge[k][2]-T.qubit_N])
          for l=1:length(indexs)
-          if (indexs[l]) in inds(T.gates[end]) 
+          if (indexs[l]) in inds(T.gates[end]) && T.indexs[n,1] in indexs
            n1 = T.edge[k][2]
           end
          end
@@ -54,6 +70,11 @@ function Find_pre_node(n,T)
 
 end
 
+# Add a set of gates to the network. 
+# In the case of one gate the inputs are the network a string for the gate and qubits for the gate.
+# If a gate effects more then one qubit then they are given in square brackets [i,j] 
+# For multiple gates the are given in square brackets ["1","2',"3"]
+# The qubits are given in a similar way. [[i,j],k,l]
 function Add_gate(T,g,n) 
  if isa(g,Array) 
   for i=1:length(g)
@@ -106,7 +127,14 @@ function Add_measure(T,g,n)
  push!(T.measure,(g,n))
 
 end
+
+##########
+#
+# Functions to write out the initial conditions and the out waves.
+#
+##########
  
+# Writing the initial state wavefunction for the qubits n where n can be an int or array of ints. 
 function Wave_in(T,n) 
  if isa(n,Array)
   for i=1:length(n)
@@ -117,7 +145,8 @@ function Wave_in(T,n)
  end
  
 end
- 
+
+# Writing the initial state density matrix for the qubits n where n can be an int or array of ints.
 function Density_in(T,n) 
  if isa(n,Array)
   for i=1:length(n)
@@ -129,6 +158,7 @@ function Density_in(T,n)
  
 end
 
+# Writing the output state wavefunction for the qubits n where n can be an int or array of ints.
 function Wave_out(T,n) 
  if isa(n,Array)
   for i=1:length(n)
@@ -139,7 +169,8 @@ function Wave_out(T,n)
  end
  
 end
- 
+
+# Writing the output state density matrix for the qubits n where n can be an int or array of ints.
 function Density_out(T,n)
  if isa(n,Array)
   for i=1:length(n)
@@ -151,20 +182,27 @@ function Density_out(T,n)
  
 end
  
+# Performs a measurement on qubit n  
 function Qmeasure_out(T,n) 
 
  return tensor_fun.Q_Meas(T.out[1][n])
  
 end
 
-function Split(T)#push V on to the end of gates so then just need to add edges and not move all nodes
+##########
+#
+# Functions to split gates that work on multiple qubits.
+#
+##########
+
+# Calls the splitting function depending on the value of solver
+function Split(T)
  if component_def.solver == "simple"
    Split_L(T)
  else
    Split_N(T)
  end
 end
-
 
 function Split_L(T)
  fin=[]
@@ -240,7 +278,11 @@ function Split_N(T)
 
 end
 
-
+##########
+#
+# Functions to contract the network.
+#
+##########
 
 function Contract(T)
  if component_def.solver == "simple"
@@ -251,6 +293,12 @@ function Contract(T)
  end
 
 end
+
+##########
+#
+# Functions to load and save circuits to and from file.
+#
+##########
 
 function Load_circuit(T,filename)
  a = parcing.Read_InPutFile(filename)

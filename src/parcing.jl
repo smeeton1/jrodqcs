@@ -1,3 +1,8 @@
+#
+#
+# Contains reading and writing function utility functions
+#
+#
 
 module parcing
 
@@ -5,14 +10,16 @@ using ITensors
 include("component_def.jl")
 
 
-export Read_InPutFile, Write_OutPutFile, Index_setup, check_str, Tensor_Setup, testing
-export gate_set, set_qinit, measure_set, density_out, write_wave_out
+export Read_InPutFile, Write_OutPutFile, Index_setup, check_str, Tensor_Setup
+export gate_set, set_qinit, measure_set, density_out, write_wave_out, isin, flattenA
 
+##########
+#
+# Utility functions
+#
+##########
 
-function testing()
- println("hello")
-end
-
+# Check if a is a string.
 function check_str(a)
     try
         parse(Int64,a)
@@ -22,6 +29,50 @@ function check_str(a)
     end
 end
 
+# Checks if n is in A.
+function isin(A,n)
+ t = false
+ for i=1:length(A)
+   if isa(A[i],Array)
+    for j=1:length(A[i])
+     if isin(A[i][j],n)
+      t=true
+     end
+    end
+   else
+     if A[i] == n
+      t=true
+     end
+   end
+ end
+ return t
+
+end
+
+# Removes one layer of an array. [[i,j],k]--> [i,j,k]
+function flattenA(A)
+ b=[]
+ for i=1:length(A)
+   if length(A[i])>1
+      for j=1:length(A[i])
+       push!(b,A[i][j])
+      end
+    else
+     push!(b,A[i])
+    end
+   end
+
+ return b
+end
+
+
+##########
+#
+# Read in and set up functions
+#
+##########
+
+# Sets up the indexs for the Tensors
 function Index_setup(a)
 
     d=Index[]
@@ -33,6 +84,7 @@ function Index_setup(a)
 
 end
 
+# Reads the input file
 function Read_InPutFile(InPutFile)
 
  a=[]
@@ -49,16 +101,7 @@ function Read_InPutFile(InPutFile)
 
 end
 
-function Write_OutPutFile(a,OutFile)
-
- open(OutFile, "w") do io
-  for i=1:length(a)
-    write(io,a[i])
-  end
- end
-
-end
-
+# Sets the initial states
 function Inital_State(N,d,a)
  Q=ITensor[]
  for i=1:N
@@ -67,6 +110,7 @@ function Inital_State(N,d,a)
  return Q
 end
 
+# Gets a tensor for a Gate
 function gate_set(s,n,d)
 
 
@@ -155,6 +199,25 @@ function set_qinit(S,d,N)
  return Q
 end
 
+
+##########
+#
+# Output functions
+#
+##########
+
+# Writes an output file
+function Write_OutPutFile(a,OutFile)
+
+ open(OutFile, "w") do io
+  for i=1:length(a)
+    write(io,a[i])
+  end
+ end
+
+end
+
+# Prints a wavefunction to the screen
 function write_wave_out(T)
  if sign(T[2]) == 0
   println(sqrt(T[1]),' ', sqrt(T[4]))
@@ -163,6 +226,7 @@ function write_wave_out(T)
  end
 end
 
+# Prints a density matrix to the screen
 function write_density_out(T)
 
   println(T[1],' ',T[2])
@@ -170,39 +234,6 @@ function write_density_out(T)
 
 end
 
-function isin(A,n)
- t = false
- for i=1:length(A)
-   if length(A[i])>1
-    for j=1:length(A[i])
-     if isin(A[i][j],n)
-      t=true
-     end
-    end
-   else
-     if A[i] == n
-      t=true
-     end
-   end
- end
- return t
-
-end
-
-function flattenA(A)
- b=[]
- for i=1:length(A)
-   if length(A[i])>1
-      for j=1:length(A[i])
-       push!(b,A[i][j])
-      end
-    else
-     push!(b,A[i])
-    end
-   end
-
- return b
-end
 
 
 end

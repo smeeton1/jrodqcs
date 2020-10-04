@@ -1,3 +1,10 @@
+#
+#
+# Contains functions for manipulating networks of tensors.
+#
+#
+
+
 module tensor_fun
 
 using ITensors
@@ -5,10 +12,98 @@ include("component_def.jl")
 include("parcing.jl")
 
 
-export Ten_Add, Ten_split, line_mps, Contract_Lines, Contract_Node, Q_Meas 
+export Ten_Add, Ten_split, line_mps, Contract_Lines, Contract_Node, Q_Meas,  Search_edge, Search_edge_1, Edge_contract
  
+# Performs a partial trace for index I of tensor T.  
+function Par_Trac(T::ITensor, I::Index)
+ if hasinds(T,I)
+
+  index=inds(T)
+
+  A=T
+  for j=1:length(index)
+    if index[j]!=I
+     temp= component_def.Trace(index[j])
+     A= A*temp
+    end
+
+  end
+  return A
+ else
+  #println(I, "is not in T")
+  return T
+ end
+
+
+end
+
+# Performs a measurement on qubit Q returning 1 or 0 for state of the qubit
+function Q_Meas(Q)
+ i=0
+ while i<30
+  x=bitrand()
+  if x[1]
+   if rand() < abs(Q[1])
+    return 1
+   end
+  else
+   if rand() < abs(Q[4])
+    return 0
+   end
+  end
+  i=i+1
+ end
+ x =bitrand()
+ if x[1]
+    return 1
+ else
+    return 0
+ end
+
+end 
+
+##########
+#
+# Functions for working with graph edges.
+#
+##########
+
+# Finds an edge that contains node n.
+function Search_edge(T,n)
+  a=[]
+  for i=1:length(T)
+   if n in T[i]
+    push!(a,i)
+   end
+  end
+  return a
+end
+
+# Finds an edge that starts with node n.
+function Search_edge_1(T,n)
+  a=[]
+  for i=1:length(T)
+   if n == T[i][1]
+    push!(a,i)
+   end
+  end
+  return a
+end
+
+# Contracts a node into the state B according to the edge E, with H being the array of gates and n the number of qubits.
+function Edge_contract(B,H,E,n)
+ i=E[2]-n
+ B=B*H[i]
+ return B
+end
  
+##########
+#
+# Functions for manipulating tensor networks.
+#
+##########
  
+# Adds tensor which share indexes. 
 function Ten_Add(Tens)
  fin=[]
  N = size(Tens,1)
@@ -50,6 +145,7 @@ function Ten_Add(Tens)
  
 end
 
+# Splits tensors that act on more then one qubit.
 function Ten_split(T)
  fin=[]
  N = size(T,1)
@@ -78,7 +174,7 @@ function Ten_split(T)
  
 end
 
-
+# Performs a line contraction. This function contracts along a single index.
 function line_mps(Q,T)
  N=size(T,1)
  index=inds(Q)
@@ -94,30 +190,7 @@ function line_mps(Q,T)
 
 end
 
-
-function Par_Trac(T::ITensor, I::Index)
- if hasinds(T,I)
-
-  index=inds(T)
-
-  A=T
-  for j=1:length(index)
-    if index[j]!=I
-     temp= component_def.Trace(index[j])
-     A= A*temp
-    end
-
-  end
-  return A
- else
-  #println(I, "is not in T")
-  return T
- end
-
-
-end
-
-
+# Performs line contractions for each qubit combines the lines and then traces out the final state for each qubit. 
 function Contract_Lines(Q,H)
  N=size(Q,1)
  A=[]
@@ -140,33 +213,7 @@ function Contract_Lines(Q,H)
 
 end
 
-function Search_edge(T,n)
-  a=[]
-  for i=1:length(T)
-   if n in T[i]
-    push!(a,i)
-   end
-  end
-  return a
-end
-
-function Search_edge_1(T,n)
-  a=[]
-  println(n)
-  for i=1:length(T)
-   if n == T[i][1]
-    push!(a,i)
-   end
-  end
-  return a
-end
-
-function Edge_contract(B,H,E,n)
- i=E[2]-n
- B=B*H[i]
- return B
-end
-
+#Performs a nodal contraction by depth and traces out the final state for each qubit.
 function Contract_Node(Q,H,E)
 #need to contract by column/ depth
 #need to skip rows when no gate in (check multi row gates to see if skip)
@@ -186,7 +233,7 @@ function Contract_Node(Q,H,E)
    println("N=",N)
    println("E_L=",length(Et))
    println("Q_L=", length(Bh))
-   println(Et)
+   println("E=",Et)
   end
   D=D+1
   a=[]
@@ -195,14 +242,14 @@ function Contract_Node(Q,H,E)
   for i=1:length(N)
    if length(N[i])>1
     for k=1:length(N[i])
-     push!(a,Search_edge(Et,N[i][k]))
+     push!(a,Search_edge_1(Et,N[i][k]))
     end
    else
-    push!(a,Search_edge(Et,N[i]))
+    push!(a,Search_edge_1(Et,N[i]))
    end
   end
   if component_def.verbose == true
-   println(a)
+   println("a=",a)
   end
   
   for i=1:length(a)
@@ -212,31 +259,33 @@ function Contract_Node(Q,H,E)
   end
   println(n1)
   for i=1:length(n1)
+   if order(H[n1[i][3]-n])>2
     b= Search_edge(Et,n1[i][3])
-    n2=0
-    if length(b)>2
+    n2=true
+
      for j=2:length(b)
       for k=1:length(n1)
        #println(k!=i && !(n1[k][3] in Et[b[j]]) )
-       if k!=i && !(n1[k][3] in Et[b[j]])
-        n2=n2+1
+       if k!=i && (n1[k][3] in Et[b[j]])
+        n2=false
        end
       end
      end
      #println(n2)
-     if n2>3
+     if n2
       deleteat!(a[n1[i][1]],[n1[i][2]])
      else
-     for j=2:length(b)
+     for j=1:length(b)
       for k=1:length(n1)
        #println(k!=i && !(n1[k][3] in Et[b[j]]) )
-       if k!=i && (n1[k][3] in Et[b[j]]) && !(b[j] in a)
-         push!(a,b[j])
+       if k!=i && (n1[k][3] in Et[b[j]]) && !(parcing.isin(a,b[j]))
+         push!(a,[b[j]])
        end
       end
      end
      end
     end
+
   end
   #println(a)
   for i=1:length(a)
@@ -275,6 +324,7 @@ function Contract_Node(Q,H,E)
     pop!(N);
   end
   l=0
+  sort!(a)
   for i=1:length(a)
    if length(a[i])>0
     for j=1:length(a[i])
@@ -292,7 +342,7 @@ function Contract_Node(Q,H,E)
      N[i]=parcing.flattenA(N[i])
     end
   end
-
+  #println("N_e=",N)
   end
 
  A=[]
@@ -308,30 +358,6 @@ function Contract_Node(Q,H,E)
   end
  end
  return A
-end
-
-function Q_Meas(Q)
- i=0
- while i<30
-  x=bitrand()
-  if x[1]
-   if rand() < abs(Q[1])
-    return 1
-   end
-  else
-   if rand() < abs(Q[4])
-    return 0
-   end
-  end
-  i=i+1
- end
- x =bitrand()
- if x[1]
-    return 1
- else
-    return 0
- end
-
 end
 
 end
