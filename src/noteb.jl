@@ -8,6 +8,7 @@ module noteb
 
 using ITensors
 using Random
+using DelimitedFiles
 
 include("component_def.jl")
 include("parcing.jl")
@@ -39,7 +40,7 @@ mutable struct qc_network
 end
 
 
-# Sets the initial condition for the networt. Takes network and a string containing initial state.  
+# Sets the initial condition for the network. Takes network and a string containing initial state.  
 function Set_init(T,s)
  push!(T.init_state,parcing.set_qinit(s,T.indexs,T.qubit_N))
  if length(T.record)<2
@@ -300,13 +301,38 @@ end
 #
 ##########
 
-function Load_circuit(T,filename)
- a = parcing.Read_InPutFile(filename)
- T = qc_network(parse(Int64,a[1][1]))
- Set_init(T,a[2])
- Add_gate(T,a[3:end][1],a[3:end][2:end])
- T.record = a
+function Load_circuit(filename)
+ a = readdlm(filename)#(parcing.Read_InPutFile(filename)
+ if component_def.verbose == true
+  println(a)
+ end
+ T = qc_network(a[1][1]);
+ s= a[2]
+ Set_init(T,s)
+ G=a[3:end,1]
+ N=a[3:end,2:end]
+ for i=1:length(N)
+  if !isa(N[i],Int64)
+  n=[]
+   for j=1:length(N[i])
+    if parcing.check_str(N[i][j])
+      push!(n,parse(Int64,N[i][j]))
+    end
+   
+   end
+  N[i]=n
+  else
+  N[i]=N[i]
+  end
+ end
 
+ Add_gate(T,G,N)
+ 
+ if component_def.verbose == true
+  println(T)
+ end
+ 
+ return T
 end
 
 function Save_circuit(T,filename)

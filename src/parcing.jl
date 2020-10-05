@@ -7,6 +7,7 @@
 module parcing
 
 using ITensors
+using DelimitedFiles
 include("component_def.jl")
 
 
@@ -209,11 +210,12 @@ end
 # Writes an output file
 function Write_OutPutFile(a,OutFile)
 
- open(OutFile, "w") do io
-  for i=1:length(a)
-    write(io,a[i])
-  end
- end
+ io=open(OutFile, "w")
+#   for i=1:length(a)
+#     println(a[i])
+    writedlm(io,a," ")
+#  end
+ close(io)
 
 end
 
