@@ -83,16 +83,28 @@ function Add_gate(T,g,n)
     push!(T.record,[g[i],string(n[i])])
     if length(T.edge)<1
      if isa(n[i],Array)
-      for j=1:length(n[i])
-       push!(T.edge,[n[i][j],T.qubit_N+1])
+      if g[i] == "CR" || g[i] == "CP" || g[i] == "Rx" || g[i] == "Ry" || g[i] == "Rz"
+       for j=1:length(n[i])-1
+        push!(T.edge,[Int64(n[i][j]),T.qubit_N+1])
+       end
+      else
+       for j=1:length(n[i])
+        push!(T.edge,[n[i][j],T.qubit_N+1])
+       end
       end
      else
       push!(T.edge,[n[i],T.qubit_N+1])
      end
     else
      if isa(n[i],Array)
-       for j=1:length(n[i]) 
+       if g[i] == "CR" || g[i] == "CP" || g[i] == "Rx" || g[i] == "Ry" || g[i] == "Rz"
+        for j=1:length(n[i]) -1
+         push!(T.edge,[Find_pre_node(Int64(n[i][j]),T),T.qubit_N+length(T.gates)])
+        end
+       else
+        for j=1:length(n[i])
          push!(T.edge,[Find_pre_node(n[i][j],T),T.qubit_N+length(T.gates)])
+        end
        end
      else
       push!(T.edge,[Find_pre_node(n[i],T),T.qubit_N+length(T.gates)])
@@ -104,16 +116,29 @@ function Add_gate(T,g,n)
   push!(T.record,[g,string(n)])
   if length(T.edge)<1
     if isa(n,Array)
-      for j=1:length(n)
-       push!(T.edge,[n[j],T.qubit_N+1])
+      if g == "CR" || g == "CP" || g == "Rx" || g == "Ry" || g == "Rz"
+       
+       for j=1:length(n)-1
+        push!(T.edge,[Int64(n[j]),T.qubit_N+1])
+       end
+      else
+       for j=1:length(n)
+        push!(T.edge,[n[j],T.qubit_N+1])
+       end
       end
      else
       push!(T.edge,[n,T.qubit_N+1])
      end
   else
    if isa(n,Array)
-    for j=1:length(n)
-     push!(T.edge,[Find_pre_node(n[j],T),T.qubit_N+length(T.gates)]);
+    if g == "CR" || g == "CP" || g == "Rx" || g == "Ry" || g == "Rz"
+     for j=1:length(n)-1
+       push!(T.edge,[Find_pre_node(Int64(n[j]),T),T.qubit_N+length(T.gates)]);
+     end
+    else
+     for j=1:length(n)
+       push!(T.edge,[Find_pre_node(n[j],T),T.qubit_N+length(T.gates)]);
+     end
     end
    else
     push!(T.edge,[Find_pre_node(n,T),T.qubit_N+length(T.gates)]);
@@ -210,7 +235,7 @@ function Split_L(T)
  N = size(T.gates,1)
  hold = ITensor(ComplexF64,T.indexs[1,1])
  for i=1:N
-  if order(T.gates[i])>2
+  if order(T.gates[i])>3
    index=inds(T.gates[i])
    U,S,V =svd(T.gates[i],(index[1],index[2])) 
    U=U*S
@@ -238,7 +263,7 @@ function Split_N(T)
  
  N = size(T.gates,1)
  for i=1:N
-  if order(T.gates[i])>2
+  if order(T.gates[i])>3
    index=inds(T.gates[i])
    l = Int64(length(index)/2)
    U,S,V =svd(T.gates[i],(index[1],index[2])) 

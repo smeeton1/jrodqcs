@@ -148,23 +148,46 @@ function gate_set(s,n,d)
    
    if s == "Rx"
 
-       Ham=component_def.RxGate(d[n,1],d[n,2]) 
+       Ham=component_def.RxGate(d[Int64(n[1]),1],d[Int64(n[1]),2],n[2]) 
      
    end
    
    if s == "Ry"
 
-       Ham=component_def.RyGate(d[n,1],d[n,2]) 
+       Ham=component_def.RyGate(d[Int64(n[1]),1],d[Int64(n[1]),2],n[2]) 
      
    end
    
    if s == "Rz"
 
-       Ham=component_def.RzGate(d[n,1],d[n,2]) 
+       Ham=component_def.RzGate(d[Int64(n[1]),1],d[Int64(n[1]),2],n[2]) 
+     
+   end
+
+   if s == "SW"
+
+       Ham=component_def.SWGate(d[n[1],1],d[n[1],2],d[n[2],1],d[n[2],2]) 
+     
+   end 
+   
+   if s == "CZ"
+
+       Ham=component_def.CZGate(d[n[1],1],d[n[1],2],d[n[2],1],d[n[2],2]) 
+     
+   end
+
+   if s == "CP"
+
+       Ham=component_def.CPhaseGate(d[Int64(n[1]),1],d[Int64(n[1]),2],d[Int64(n[2]),1],d[Int64(n[2]),2],n[3]) 
      
    end
    
+   if s == "CR"
 
+       Ham=component_def.CRGate(d[n[1],1],d[n[1],2],d[n[2],1],d[n[2],2],n[3]) 
+     
+   end
+   
  return Ham
 end
 

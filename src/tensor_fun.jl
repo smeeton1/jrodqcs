@@ -257,7 +257,9 @@ function Contract_Node(Q,H,E)
      push!(n1,[i,j,Et[a[i][j]][2]])
    end
   end
-  println(n1)
+  if component_def.verbose == true
+    println(n1)
+  end
   for i=1:length(n1)
    if order(H[n1[i][3]-n])>2
     b= Search_edge(Et,n1[i][3])
@@ -290,8 +292,7 @@ function Contract_Node(Q,H,E)
   #println(a)
   for i=1:length(a)
    if length(a[i])>0
-     for j=1:length(n1)
-     #println(parcing.isin(N,Et[a[i][1]][2]))
+     for j=1:length(N)
      if Et[a[i][1]][1] in N[j] && !(parcing.isin(N,Et[a[i][1]][2]) ) #(isassigned(N,Et[a[i][1]][2] ))
       Bh[j]=Edge_contract(Bh[j],H,Et[a[i][1]],n)
       if length(N[j]) > 1
