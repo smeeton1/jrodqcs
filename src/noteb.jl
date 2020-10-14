@@ -376,10 +376,38 @@ function graph(n)
 
 end
 
+##########
+#
+# Functions to change global variables when used in notebook.
+#
+##########
+
+
 function change_solver(v)
  component_def.set_solver(v)
  if component_def.verbose == true
   println(component_def.solver)
+ end
+end
+
+function change_verbose(v)
+ component_def.set_verbose(v)
+ if component_def.verbose == true
+  println(component_def.verbose)
+ end
+end
+
+function change_tol(v)
+ component_def.set_tol(v)
+ if component_def.verbose == true
+  println(component_def.tol)
+ end
+end
+
+function change_depth(v)
+ component_def.set_depth(v)
+ if component_def.verbose == true
+  println(component_def.depth)
  end
 end
 
