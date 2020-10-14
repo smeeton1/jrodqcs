@@ -223,10 +223,13 @@ end
 
 # Calls the splitting function depending on the value of solver
 function Split(T)
- if component_def.solver == "simple"
-   Split_L(T)
+ if component_def.verbose == true
+  println(component_def.solver)
+ end
+ if component_def.solver == "Line"
+   Split_L(T);
  else
-   Split_N(T)
+   Split_N(T);
  end
 end
 
@@ -256,7 +259,7 @@ function Split_L(T)
   end
  
  end
- T.gates[:] = fin
+ T.gates[:] = fin;
 end
 
 function Split_N(T)
@@ -311,10 +314,13 @@ end
 ##########
 
 function Contract(T)
- if component_def.solver == "simple"
+ if component_def.verbose == true
+  println(component_def.solver)
+ end
+ if component_def.solver == "Line"
   push!(T.out,tensor_fun.Contract_Lines(T.init_state[1],T.gates))
  end
- if component_def.solver == "node"
+ if component_def.solver == "Node"
   push!(T.out,tensor_fun.Contract_Node(T.init_state[1],T.gates,T.edge))
  end
 
@@ -368,6 +374,13 @@ end
 
 function graph(n)
 
+end
+
+function change_solver(v)
+ component_def.set_solver(v)
+ if component_def.verbose == true
+  println(component_def.solver)
+ end
 end
 
 end

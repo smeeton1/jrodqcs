@@ -20,13 +20,13 @@ export Init_st, HGate, XGate, CNotGate, XMeasure, ZMeasure, RxGate, RyGate, RzGa
 
 
 verbose = true        # Turns on or off extra output information.
-solver  = "node"      # Chooses the type of solver. (Simple, Node)
+solver  = "Node"      # Chooses the type of solver. (Line, Node)
 tol     = 1E-6        # Set tolerance for SVD 
-depth   = 1000        # Set maximum depth to be calculated to. If depth is set to higher then circuit depth, 
+depth   = 10        # Set maximum depth to be calculated to. If depth is set to higher then circuit depth, 
                       # the whole circuit will be calculated
 
 set_verbose(v) = (global verbose = v) # Allows for the value of verbose to be changed (true, false)
-set_solver(v)  = (global solver = v)  # Allows for the value of solver to be changed  (Simple, Node)
+set_solver(v)  = (global solver = v)  # Allows for the value of solver to be changed  (Line, Node)
 set_tol(v)     = (global tol = v)     # Allows for the value of tol to be changed     (float)
 set_depth(v)   = (global depth = v)   # Allows for the value of depth to be changed   (int)
 
@@ -269,22 +269,22 @@ end
 
 function CRGate(i::Index, j::Index, k::Index, l::Index,C)
   A = ITensor(ComplexF64,i,j,k,l)
-
+  
   A[i(1),j(1),k(1),l(1)]=1.0
   A[i(1),j(2),k(1),l(2)]=1.0
   A[i(1),j(3),k(1),l(3)]=1.0
   A[i(1),j(4),k(1),l(4)]=1.0
   A[i(2),j(1),k(2),l(1)]=1.0
-  A[i(2),j(2),k(2),l(2)]=exp(2.0 * pi * -1im / (2.0^(C+1.0)))
+  A[i(2),j(2),k(2),l(2)]=exp(2.0 * pi * -1.0im / (2.0^(C+1.0)))
   A[i(2),j(3),k(2),l(3)]=1.0
-  A[i(2),j(4),k(2),l(4)]=exp(2.0 * pi * -1im / (2.0^(C+1.0)))
+  A[i(2),j(4),k(2),l(4)]=exp(2.0 * pi * -1.0im / (2.0^(C+1.0)))
   A[i(3),j(1),k(3),l(1)]=1.0
   A[i(3),j(2),k(3),l(2)]=1.0
-  A[i(3),j(3),k(3),l(3)]=exp(2.0 * pi * 1im / (2.0^(C+1.0)))
-  A[i(3),j(4),k(3),l(4)]=exp(2.0 * pi * 1im / (2.0^(C+1.0)))
+  A[i(3),j(3),k(3),l(3)]=exp(2.0 * pi * 1.0im / (2.0^(C+1.0)))
+  A[i(3),j(4),k(3),l(4)]=exp(2.0 * pi * 1.0im / (2.0^(C+1.0)))
   A[i(4),j(1),k(4),l(1)]=1.0
-  A[i(4),j(2),k(4),l(2)]=exp(2.0 * pi * -1im / (2.0^(C+1.0)))
-  A[i(4),j(3),k(4),l(3)]=exp(2.0 * pi * 1im / (2.0^(C+1.0)))
+  A[i(4),j(2),k(4),l(2)]=exp(2.0 * pi * -1.0im / (2.0^(C+1.0)))
+  A[i(4),j(3),k(4),l(3)]=exp(2.0 * pi * 1.0im / (2.0^(C+1.0)))
   A[i(4),j(4),k(4),l(4)]=1.0
 
   return A
