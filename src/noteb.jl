@@ -283,12 +283,12 @@ function Split_N(T)
    a=tensor_fun.Search_edge(T.edge,i+T.qubit_N)
    m=length(T.gates)+T.qubit_N
    for j=2:length(a)
-    if j<=l
+    if j<=l 
       T.edge[a[j]][2]=m-l+j
     else 
      for k=2:l
-      indexs=inds(T.gates[T.edge[a[j]][2]-T.qubit_N])
-      if indexs[1] in inds(T.gates[m-l+k-T.qubit_N])
+      indexs=inds(T.gates[m-l+k-T.qubit_N])
+      if indexs[1] in inds(T.gates[T.edge[a[j]][2]-T.qubit_N])
          T.edge[a[j]][1]=m-l+k
       end
      end
