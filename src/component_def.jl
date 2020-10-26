@@ -19,17 +19,18 @@ export Init_st, HGate, XGate, CNotGate, XMeasure, ZMeasure, RxGate, RyGate, RzGa
 ##########
 
 
-verbose = false        # Turns on or off extra output information.
+verbose = true        # Turns on or off extra output information.
 solver  = "Node"      # Chooses the type of solver. (Line, Node)
 tol     = 1E-6        # Set tolerance for SVD 
-depth   = 10        # Set maximum depth to be calculated to. If depth is set to higher then circuit depth, 
+depth   = 1000        # Set maximum depth to be calculated to. If depth is set to higher then circuit depth, 
                       # the whole circuit will be calculated
+form    = "Density"   # Choose between working with density matrices or wave function. (Density, Wave)
 
 set_verbose(v) = (global verbose = v) # Allows for the value of verbose to be changed (true, false)
 set_solver(v)  = (global solver = v)  # Allows for the value of solver to be changed  (Line, Node)
 set_tol(v)     = (global tol = v)     # Allows for the value of tol to be changed     (float)
 set_depth(v)   = (global depth = v)   # Allows for the value of depth to be changed   (int)
-
+set_form(v)    = (global form = v)    # Allows for the value of depth to be changed   (Density, Wave)
 
 ##########
 #
@@ -153,6 +154,18 @@ function ZGate(i::Index, j::Index)
   A[i(1),j(1)]=1.0
   A[i(2),j(2)]=-1.0
   A[i(3),j(3)]=-1.0
+  A[i(4),j(4)]=1.0
+
+  return A
+
+end 
+
+function IGate(i::Index, j::Index)
+  A = ITensor(ComplexF64,i,j)
+
+  A[i(1),j(1)]=1.0
+  A[i(2),j(2)]=1.0
+  A[i(3),j(3)]=1.0
   A[i(4),j(4)]=1.0
 
   return A

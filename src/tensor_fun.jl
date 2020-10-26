@@ -10,6 +10,7 @@ module tensor_fun
 using ITensors
 include("component_def.jl")
 include("parcing.jl")
+include("proform.jl")
 
 
 export Ten_Add, Ten_split, line_mps, Contract_Lines, Contract_Node, Q_Meas,  Search_edge, Search_edge_1, Edge_contract
@@ -202,14 +203,14 @@ function Contract_Lines(Q,H)
  for i=3:N
    B=B*A[i]
  end
- index=inds(B)
- #println(index)
- #println(length(index))
- for j=1:N
-  A[j]=Par_Trac(B, index[j])
-  #println("o= ",order(A[j]))
- end
- return A
+#  index=inds(B)
+#  #println(index)
+#  #println(length(index))
+#  for j=1:N
+#   A[j]=Par_Trac(B, index[j])
+#   #println("o= ",order(A[j]))
+#  end
+ return B
 
 end
 
@@ -346,16 +347,10 @@ function Contract_Node(Q,H,E)
   #println("N_e=",N)
   end
 
- A=[]
- for i=1:length(Bh)
-  index=inds(Bh[i])
-  if length(index)>1
-   for j=1:length(index)
-    push!(A,Par_Trac(Bh[i], index[j]))
-   end
-    #println("o= ",order(A[j]))
-  else
-   push!(A,Bh[i])
+ A=Bh[1]
+ if length(Bh) > 1
+  for i=2:length(Bh)
+    A=A*Bh[i]
   end
  end
  return A

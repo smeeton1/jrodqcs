@@ -127,7 +127,7 @@ function gate_set(s,n,d)
      
    end
    
-   if s == "CN"
+   if s == "CN" || s == "CX"
 
        Ham=component_def.CNotGate(d[n[1],1],d[n[1],2],d[n[2],1],d[n[2],2]) 
      
@@ -141,6 +141,12 @@ function gate_set(s,n,d)
    end
    
    if s == "Z"
+
+       Ham=component_def.ZGate(d[n,1],d[n,2]) 
+     
+   end
+   
+   if s == "I"
 
        Ham=component_def.ZGate(d[n,1],d[n,2]) 
      
@@ -251,11 +257,80 @@ function write_wave_out(T)
  end
 end
 
+
+function Fun_N(i,j,L,L2,W)
+    if length(L)>1
+        if i > L[1]
+            if j > L2[1]
+                return 3*W[1]+Fun_N(i-L[1],j-L2[1],L[2:end],L2[2:end],W[2:end])
+            else
+                return 1*W[1]+Fun_N(i-L[1],j,L[2:end],L2[2:end],W[2:end])
+            end
+        else
+            if j > L2[1]
+                return 2*W[1]+Fun_N(i,j-L2[1],L[2:end],L2[2:end],W[2:end]) 
+            else
+                return Fun_N(i,j,L[2:end],L2[2:end],W[2:end])
+            end
+        end
+    else
+        if i == 2 
+           if j == 2
+             return  1+ W[1]*3
+           else
+             return  1+ W[1]
+           end
+        else
+           if j == 2
+             return  1+ W[1]*2
+           else
+             return 1
+           end 
+        end
+    end
+end
+
+function Fun_A(i,j,N,O)
+    Lim=[]
+    W=[4,1]
+    for k=1:O
+       push!(Lim,N/(2^k)) 
+    end
+    if O>2
+        for k=3:O
+            push!(W,4^(k-1))
+        end
+    end
+    #println(Lim)
+    #println(W)
+    #println(Fun_N(i,j,Lim,Lim,W))
+    return Int64(Fun_N(i,j,Lim,Lim,W))
+end
+
+
 # Prints a density matrix to the screen
 function write_density_out(T)
 
-  println(T[1],' ',T[2])
-  println(T[3],' ',T[4])
+    N=length(T.store)
+    M=N/4
+    A=isqrt(N)
+    B=order(T)
+    n=0
+    if B ==1
+        P=transpose(reshape(T.store,A,A))
+    else    
+        P=zeros(Float64,A,A)
+        for i=1:A
+            for j=1:A
+                n=Fun_A(j,i,A,B)
+                P[i,j]=T.store[n]  
+            end
+        end
+    end
+
+    for i=1:A
+        println(P[i,:])
+    end
 
 end
 
