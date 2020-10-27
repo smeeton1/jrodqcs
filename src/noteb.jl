@@ -328,6 +328,40 @@ end
 
 ##########
 #
+# Functions to clear a network.
+#
+##########
+
+function remove_gates(T)
+ for i=1:length(T.gates)
+   pop!(T.gates);
+ end
+ for i=1:length(T.edge)
+   pop!(T.edge);
+ end
+end
+
+function remove_init(T)
+ for i=1:length(T.init_state)
+   pop!(T.init_state);
+ end
+end
+
+function remove_record(T)
+ for i=1:length(T.record)
+   pop!(T.record);
+ end
+end
+
+function empty_network(T)
+    remove_gates(T)
+    remove_init(T)
+    remove_record(T)
+end
+
+
+##########
+#
 # Functions to load and save circuits to and from file.
 #
 ##########
