@@ -188,10 +188,10 @@ end
 function Wave_out(T,n) 
  if isa(n,Array)
   for i=1:length(n)
-   parcing.write_wave_out(T.out[1][n[i]])
+   parcing.write_wave_out(T.out[n[i]])
   end
  else
-  parcing.write_wave_out(T.out[1][n])
+  parcing.write_wave_out(T.out[n])
  end
  
 end
@@ -200,10 +200,10 @@ end
 function Density_out(T,n)
  if isa(n,Array)
   for i=1:length(n)
-     parcing.write_density_out(T.out[1][n[i]])
+     parcing.write_density_out(T.out[n[i]])
   end
  else
-   parcing.write_density_out(T.out[1][n])
+   parcing.write_density_out(T.out[n])
  end
  
 end
@@ -408,6 +408,13 @@ function change_depth(v)
  component_def.set_depth(v)
  if component_def.verbose == true
   println(component_def.depth)
+ end
+end
+
+function change_Form(v)
+ component_def.set_form(v)
+ if component_def.verbose == true
+  println(component_def.form)
  end
 end
 
