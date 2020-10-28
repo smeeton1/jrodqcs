@@ -13,5 +13,7 @@ include("component_def.jl")
 include("parcing.jl")
 include("tensor_fun.jl")
 include("noteb.jl")
+include("wave.jl")
+include("wave_comp.jl")
 
 end

@@ -13,6 +13,8 @@ using DelimitedFiles
 include("component_def.jl")
 include("parcing.jl")
 include("tensor_fun.jl")
+include("wave.jl")
+include("wave_comp.jl")
 
 export qc_network, set_init, add_gate, add_measure, wave_in, wave_out, density_in, density_out, qmeasure_out, contract
 export Split_N, Split_T, Split
@@ -79,7 +81,11 @@ end
 function Add_gate(T,g,n) 
  if isa(g,Array) 
   for i=1:length(g)
-    push!(T.gates,parcing.gate_set(g[i],n[i],T.indexs))
+    if form == "Density" 
+        push!(T.gates,parcing.gate_set(g[i],n[i],T.indexs))
+    else
+        push!(T.gates,wave.gate_setW(g[i],n[i],T.indexs)) 
+    end
     push!(T.record,[g[i],string(n[i])])
     if length(T.edge)<1
      if isa(n[i],Array)

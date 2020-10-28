@@ -9,6 +9,8 @@ module parcing
 using ITensors
 using DelimitedFiles
 include("component_def.jl")
+include("wave.jl")
+include("wave_comp.jl")
 
 
 export Read_InPutFile, Write_OutPutFile, Index_setup, check_str, Tensor_Setup
@@ -77,8 +79,14 @@ end
 function Index_setup(a)
 
     d=Index[]
-    for i=1:a
+    if form == "Density"   
+     for i=1:a
         append!(d,[Index(4),Index(4)])
+     end
+    else
+     for i=1:a
+        append!(d,[Index(2),Index(2)])
+     end
     end
     d=reshape(d,(a,2))
     return d
@@ -105,8 +113,14 @@ end
 # Sets the initial states
 function Inital_State(N,d,a)
  Q=ITensor[]
- for i=1:N
-  push!(Q,component_def.Init_st(d[i,2],a[1+i]))
+ if form == "Density"
+    for i=1:N
+        push!(Q,component_def.Init_st(d[i,2],a[1+i]))
+    end
+ else
+    for i=1:N
+        push!(Q,wave_comp.Init_stW(d[i,2],a[1+i]))
+    end
  end
  return Q
 end
@@ -248,13 +262,49 @@ function Write_OutPutFile(a,OutFile)
 
 end
 
+function Fun_W(i,L,W)
+    if length(L)>1
+        if i > L[1]
+            return W[1]+ Fun_W(i-L[1],L[2:end],W[2:end])
+        else
+            return Fun_W(i,L[2:end],W[2:end])
+        end
+        
+    else
+        if i == 1
+            return 1
+        else
+            return 1 + W[1]
+        end
+        
+    end   
+end
+
 # Prints a wavefunction to the screen
 function write_wave_out(T)
- if sign(T[2]) == 0
-  println(sqrt(T[1]),' ', sqrt(T[4]))
- else
-  println(sqrt(T[1]),' ', sign(T[2])*sqrt(T[4]))
- end
+    if form == "Density"
+      println("There is no Wave function")
+    else
+    B=order(T)
+    if B>1
+       N=length(T.store) 
+       P=zeros(ComplexF64,N)
+       lim=[]
+       W=[]
+       for i=1:B 
+           push!(lim,N/(2^i))
+           push!(W,2^(i-1))
+       end  
+       for i=1:N 
+            P[i]=T.store[Fun_W(i,lim,W)]
+       end
+       println(P)    
+        
+    else
+       println(T.store)
+    end
+    end
+
 end
 
 
@@ -310,26 +360,27 @@ end
 
 # Prints a density matrix to the screen
 function write_density_out(T)
-
+    if form == "Density" 
     N=length(T.store)
     M=N/4
     A=isqrt(N)
     B=order(T)
-    n=0
     if B ==1
         P=transpose(reshape(T.store,A,A))
     else    
-        P=zeros(Float64,A,A)
+        P=zeros(ComplexF64,A,A)
         for i=1:A
             for j=1:A
-                n=Fun_A(j,i,A,B)
-                P[i,j]=T.store[n]  
+                P[i,j]=T.store[Fun_A(j,i,A,B)]  
             end
         end
     end
 
     for i=1:A
         println(P[i,:])
+    end
+    else
+     println("There is no density matrix")
     end
 
 end
