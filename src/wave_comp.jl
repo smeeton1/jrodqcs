@@ -176,7 +176,7 @@ function CRGateW(i::Index, j::Index, k::Index, l::Index,C)
   A = ITensor(ComplexF64,i,j,k,l)
   
   A[i(1),j(1),k(1),l(1)]=1.0
-  A[i(1),j(1),k(1),l(2)]=1.0
+  A[i(1),j(1),k(2),l(2)]=1.0
   A[i(2),j(2),k(1),l(1)]=1.0
   A[i(2),j(2),k(2),l(2)]=exp(2.0 * pi *1.0im / (2.0^(C+1.0)))
 
@@ -188,7 +188,7 @@ function CPhaseGateW(i::Index, j::Index, k::Index, l::Index,Phase)
   A = ITensor(ComplexF64,i,j,k,l)
   
   A[i(1),j(1),k(1),l(1)]=1.0
-  A[i(1),j(1),k(1),l(2)]=1.0
+  A[i(1),j(1),k(2),l(2)]=1.0
   A[i(2),j(2),k(1),l(1)]=1.0
   A[i(2),j(2),k(2),l(2)]=(cos(Phase) +1.0 * sin(Phase)im)
 
@@ -201,7 +201,7 @@ function CZGateW(i::Index, j::Index, k::Index, l::Index)
   A = ITensor(ComplexF64,i,j,k,l)
 
   A[i(1),j(1),k(1),l(1)]=1.0
-  A[i(1),j(1),k(1),l(2)]=1.0
+  A[i(1),j(1),k(2),l(2)]=1.0
   A[i(2),j(2),k(1),l(1)]=1.0
   A[i(2),j(2),k(2),l(2)]=-1.0
 
