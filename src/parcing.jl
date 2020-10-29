@@ -79,7 +79,7 @@ end
 function Index_setup(a)
 
     d=Index[]
-    if form == "Density"   
+    if component_def.form == "Density"   
      for i=1:a
         append!(d,[Index(4),Index(4)])
      end
@@ -113,7 +113,7 @@ end
 # Sets the initial states
 function Inital_State(N,d,a)
  Q=ITensor[]
- if form == "Density"
+ if component_def.form == "Density"
     for i=1:N
         push!(Q,component_def.Init_st(d[i,2],a[1+i]))
     end
@@ -237,8 +237,14 @@ end
 
 function set_qinit(S,d,N)
  Q=ITensor[]
- for i=1:N
-  push!(Q,component_def.Init_st(d[i,2],S[i]))
+ if component_def.form == "Density"
+    for i=1:N
+        push!(Q,component_def.Init_st(d[i,2],S[i]))
+    end
+ else
+    for i=1:N
+        push!(Q,wave_comp.Init_stW(d[i,2],S[i]))
+    end
  end
  return Q
 end
@@ -282,7 +288,7 @@ end
 
 # Prints a wavefunction to the screen
 function write_wave_out(T)
-    if form == "Density"
+    if component_def.form == "Density"
       println("There is no Wave function")
     else
     B=order(T)
@@ -360,7 +366,7 @@ end
 
 # Prints a density matrix to the screen
 function write_density_out(T)
-    if form == "Density" 
+    if component_def.form == "Density" 
     N=length(T.store)
     M=N/4
     A=isqrt(N)

@@ -81,7 +81,7 @@ end
 function Add_gate(T,g,n) 
  if isa(g,Array) 
   for i=1:length(g)
-    if form == "Density" 
+    if component_def.form == "Density" 
         push!(T.gates,parcing.gate_set(g[i],n[i],T.indexs))
     else
         push!(T.gates,wave.gate_setW(g[i],n[i],T.indexs)) 
@@ -118,7 +118,11 @@ function Add_gate(T,g,n)
     end
   end
  else
-  push!(T.gates,parcing.gate_set(g,n,T.indexs))
+  if component_def.form == "Density" 
+        push!(T.gates,parcing.gate_set(g,n,T.indexs))
+  else
+        push!(T.gates,wave.gate_setW(g,n,T.indexs)) 
+  end
   push!(T.record,[g,string(n)])
   if length(T.edge)<1
     if isa(n,Array)

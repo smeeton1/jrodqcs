@@ -19,7 +19,7 @@ export Init_st, HGate, XGate, CNotGate, XMeasure, ZMeasure, RxGate, RyGate, RzGa
 ##########
 
 
-verbose = true        # Turns on or off extra output information.
+verbose = false       # Turns on or off extra output information.
 solver  = "Node"      # Chooses the type of solver. (Line, Node)
 tol     = 1E-6        # Set tolerance for SVD 
 depth   = 1000        # Set maximum depth to be calculated to. If depth is set to higher then circuit depth, 

@@ -1,6 +1,6 @@
 
 
-module wave_comp
+module wave
 
 using ITensors
 
