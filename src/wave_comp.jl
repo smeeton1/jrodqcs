@@ -131,7 +131,7 @@ function CNotGateW(i::Index, j::Index, k::Index, l::Index)
   A = ITensor(ComplexF64,i,j,k,l)
 
   A[i(1),j(1),k(1),l(1)]=1.0
-  A[i(1),j(1),k(2),l(1)]=1.0
+  A[i(1),j(1),k(2),l(2)]=1.0
   A[i(2),j(2),k(1),l(2)]=1.0
   A[i(2),j(2),k(2),l(1)]=1.0
 
