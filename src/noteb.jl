@@ -175,6 +175,7 @@ function Wave_in(T,n)
  if isa(n,Array)
   for i=1:length(n)
    parcing.write_wave_out(T.init_state[1][n[i]])
+   println(" ")
   end
  else
   parcing.write_wave_out(T.init_state[1][n])
@@ -187,6 +188,7 @@ function Density_in(T,n)
  if isa(n,Array)
   for i=1:length(n)
      parcing.write_density_out(T.init_state[1][n[i]])
+     println(" ")
   end
  else
    parcing.write_density_out(T.init_state[1][n])
@@ -199,6 +201,7 @@ function Wave_out(T,n)
  if isa(n,Array)
   for i=1:length(n)
    parcing.write_wave_out(T.out[n[i]])
+   println(" ")
   end
  else
   parcing.write_wave_out(T.out[n])
@@ -211,6 +214,7 @@ function Density_out(T,n)
  if isa(n,Array)
   for i=1:length(n)
      parcing.write_density_out(T.out[n[i]])
+     println(" ")
   end
  else
    parcing.write_density_out(T.out[n])
