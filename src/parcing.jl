@@ -76,10 +76,10 @@ end
 ##########
 
 # Sets up the indexs for the Tensors
-function Index_setup(a)
+function Index_setup(a,form)
 
     d=Index[]
-    if component_def.form == "Density"   
+    if form == "Density"   
      for i=1:a
         append!(d,[Index(4),Index(4)])
      end
@@ -111,9 +111,9 @@ function Read_InPutFile(InPutFile)
 end
 
 # Sets the initial states
-function Inital_State(N,d,a)
+function Inital_State(N,d,a,form)
  Q=ITensor[]
- if component_def.form == "Density"
+ if form == "Density"
     for i=1:N
         push!(Q,component_def.Init_st(d[i,2],a[1+i]))
     end
@@ -235,9 +235,9 @@ function measure_set(s,n,d)
  return Ham
 end
 
-function set_qinit(S,d,N)
+function set_qinit(S,d,N,form)
  Q=ITensor[]
- if component_def.form == "Density"
+ if form == "Density"
     for i=1:N
         push!(Q,component_def.Init_st(d[i,2],S[i]))
     end
@@ -287,8 +287,8 @@ function Fun_W(i,L,W)
 end
 
 # Prints a wavefunction to the screen
-function write_wave_out(T)
-    if component_def.form == "Density"
+function write_wave_out(T,form)
+    if form == "Density"
       println("There is no Wave function")
     else
     B=order(T)
@@ -304,7 +304,9 @@ function write_wave_out(T)
        for i=1:N 
             P[i]=T.store[Fun_W(i,lim,W)]
        end
-       println(P)    
+       for i=1:N
+         println(P[i]) 
+       end
         
     else
        println(T.store)
@@ -365,8 +367,8 @@ end
 
 
 # Prints a density matrix to the screen
-function write_density_out(T)
-    if component_def.form == "Density" 
+function write_density_out(T,form)
+    if form == "Density" 
     N=length(T.store)
     M=N/4
     A=isqrt(N)

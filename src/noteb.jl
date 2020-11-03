@@ -37,14 +37,17 @@ mutable struct qc_network
  measure     
  indexs 
  record
+ verbose      
+ solver   
+ form   
  
- qc_network(q) = (qubit_N = q, indexs = parcing.Index_setup(q), init_state = [], gates = [], measure = [],out = [], edge = [], record =[[string(q)]])
+ qc_network(q,v="Wave") = (qubit_N = q, indexs = parcing.Index_setup(q,v), init_state = [], gates = [], measure = [],out = [], edge = [], record =[[string(q)]],verbose = false,solver  = "Node",form    = v)
 end
 
 
 # Sets the initial condition for the network. Takes network and a string containing initial state.  
 function Set_init(T,s)
- push!(T.init_state,parcing.set_qinit(s,T.indexs,T.qubit_N))
+ push!(T.init_state,parcing.set_qinit(s,T.indexs,T.qubit_N,T.form))
  if length(T.record)<2
    push!(T.record,[s])
  else
@@ -81,7 +84,7 @@ end
 function Add_gate(T,g,n) 
  if isa(g,Array) 
   for i=1:length(g)
-    if component_def.form == "Density" 
+    if T.form == "Density" 
         push!(T.gates,parcing.gate_set(g[i],n[i],T.indexs))
     else
         push!(T.gates,wave.gate_setW(g[i],n[i],T.indexs)) 
@@ -118,7 +121,7 @@ function Add_gate(T,g,n)
     end
   end
  else
-  if component_def.form == "Density" 
+  if T.form == "Density" 
         push!(T.gates,parcing.gate_set(g,n,T.indexs))
   else
         push!(T.gates,wave.gate_setW(g,n,T.indexs)) 
@@ -174,11 +177,11 @@ end
 function Wave_in(T,n) 
  if isa(n,Array)
   for i=1:length(n)
-   parcing.write_wave_out(T.init_state[1][n[i]])
+   parcing.write_wave_out(T.init_state[1][n[i]],T.form)
    println(" ")
   end
  else
-  parcing.write_wave_out(T.init_state[1][n])
+  parcing.write_wave_out(T.init_state[1][n],T.form)
  end
  
 end
@@ -187,11 +190,11 @@ end
 function Density_in(T,n) 
  if isa(n,Array)
   for i=1:length(n)
-     parcing.write_density_out(T.init_state[1][n[i]])
+     parcing.write_density_out(T.init_state[1][n[i]],T.form)
      println(" ")
   end
  else
-   parcing.write_density_out(T.init_state[1][n])
+   parcing.write_density_out(T.init_state[1][n],T.form)
  end
  
 end
@@ -200,11 +203,11 @@ end
 function Wave_out(T,n) 
  if isa(n,Array)
   for i=1:length(n)
-   parcing.write_wave_out(T.out[n[i]])
+   parcing.write_wave_out(T.out[n[i]],T.form)
    println(" ")
   end
  else
-  parcing.write_wave_out(T.out[n])
+  parcing.write_wave_out(T.out[n],T.form)
  end
  
 end
@@ -213,11 +216,11 @@ end
 function Density_out(T,n)
  if isa(n,Array)
   for i=1:length(n)
-     parcing.write_density_out(T.out[n[i]])
+     parcing.write_density_out(T.out[n[i]],T.form)
      println(" ")
   end
  else
-   parcing.write_density_out(T.out[n])
+   parcing.write_density_out(T.out[n],T.form)
  end
  
 end
@@ -237,10 +240,10 @@ end
 
 # Calls the splitting function depending on the value of solver
 function Split(T)
- if component_def.verbose == true
-  println(component_def.solver)
+ if T.verbose == true
+  println(T.solver)
  end
- if component_def.solver == "Line"
+ if T.solver == "Line"
    Split_L(T);
  else
    Split_N(T);
@@ -327,15 +330,15 @@ end
 #
 ##########
 
-function Contract(T)
- if component_def.verbose == true
-  println(component_def.solver)
+function Contract(T,Depth::Int64=1000)
+ if T.verbose == true
+  println(T.solver)
  end
- if component_def.solver == "Line"
+ if T.solver == "Line"
   push!(T.out,tensor_fun.Contract_Lines(T.init_state[1],T.gates))
  end
- if component_def.solver == "Node"
-  push!(T.out,tensor_fun.Contract_Node(T.init_state[1],T.gates,T.edge))
+ if T.solver == "Node"
+  push!(T.out,tensor_fun.Contract_Node(T.init_state[1],T.gates,T.edge,T.verbose,Depth))
  end
 
 end

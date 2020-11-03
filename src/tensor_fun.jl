@@ -214,7 +214,7 @@ function Contract_Lines(Q,H)
 end
 
 #Performs a nodal contraction by depth and traces out the final state for each qubit.
-function Contract_Node(Q,H,E)
+function Contract_Node(Q,H,E,verbose,depth)
 #need to contract by column/ depth
 #need to skip rows when no gate in (check multi row gates to see if skip)
  N=length(Q)+length(H)
@@ -227,8 +227,8 @@ function Contract_Node(Q,H,E)
   push!(N,i)
  end
  D=1
- while length(Et)>0 && D < component_def.depth
-  if component_def.verbose == true
+ while length(Et)>0 && D < depth
+  if verbose == true
    println("D=",D)
    println("N=",N)
    println("E_L=",length(Et))
@@ -248,7 +248,7 @@ function Contract_Node(Q,H,E)
     push!(a,Search_edge_1(Et,N[i]))
    end
   end
-  if component_def.verbose == true
+  if verbose == true
    println("a=",a)
   end
   
@@ -257,7 +257,7 @@ function Contract_Node(Q,H,E)
      push!(n1,[i,j,Et[a[i][j]][2]])
    end
   end
-  if component_def.verbose == true
+  if verbose == true
     println(n1)
   end
   for i=1:length(n1)
