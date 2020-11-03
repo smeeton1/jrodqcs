@@ -24,7 +24,7 @@ solver  = "Node"      # Chooses the type of solver. (Line, Node)
 tol     = 1E-6        # Set tolerance for SVD 
 depth   = 1000        # Set maximum depth to be calculated to. If depth is set to higher then circuit depth, 
                       # the whole circuit will be calculated
-form    = "Density"   # Choose between working with density matrices or wave function. (Density, Wave)
+form    = "Wave"      # Choose between working with density matrices or wave function. (Density, Wave)
 
 set_verbose(v) = (global verbose = v) # Allows for the value of verbose to be changed (true, false)
 set_solver(v)  = (global solver = v)  # Allows for the value of solver to be changed  (Line, Node)
@@ -70,10 +70,10 @@ function Init_st(i::Index,a)
     A[i(4)]= 0.0 + 0.0im
    end
    if a == '0'
-    A[i(1)]= 0.0 + 0.0im
+    A[i(1)]= 1.0 + 0.0im
     A[i(2)]= 0.0 + 0.0im
     A[i(3)]= 0.0 + 0.0im
-    A[i(4)]= 1.0 + 0.0im
+    A[i(4)]= 0.0 + 0.0im
    end
    if a == '+'
     A[i(1)]= 0.5 + 0.0im
