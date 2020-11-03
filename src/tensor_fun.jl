@@ -10,7 +10,6 @@ module tensor_fun
 using ITensors
 include("component_def.jl")
 include("parcing.jl")
-include("proform.jl")
 
 
 export Ten_Add, Ten_split, line_mps, Contract_Lines, Contract_Node, Q_Meas,  Search_edge, Search_edge_1, Edge_contract
