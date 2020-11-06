@@ -62,6 +62,14 @@ function Q_Meas(Q)
 
 end 
 
+function Tproduct(T)
+  h=T[1]
+  for i=2:length(T)
+    h=h*T[i]
+  end
+  return h
+end
+
 ##########
 #
 # Functions for working with graph edges.

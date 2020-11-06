@@ -174,7 +174,10 @@ end
 ##########
  
 # Writing the initial state wavefunction for the qubits n where n can be an int or array of ints. 
-function Wave_in(T,n) 
+function Wave_in(T,n=0) 
+ if n==0
+   parcing.write_wave_out(tensor_fun.Tproduct(T.init_state[1]),T.form)
+ else
  if isa(n,Array)
   for i=1:length(n)
    parcing.write_wave_out(T.init_state[1][n[i]],T.form)
@@ -183,11 +186,14 @@ function Wave_in(T,n)
  else
   parcing.write_wave_out(T.init_state[1][n],T.form)
  end
- 
+ end
 end
 
 # Writing the initial state density matrix for the qubits n where n can be an int or array of ints.
-function Density_in(T,n) 
+function Density_in(T,n=0) 
+ if n == 0
+   parcing.write_density_out(tensor_fun.Tproduct(T.init_state[1]),T.form)
+ else
  if isa(n,Array)
   for i=1:length(n)
      parcing.write_density_out(T.init_state[1][n[i]],T.form)
@@ -196,7 +202,7 @@ function Density_in(T,n)
  else
    parcing.write_density_out(T.init_state[1][n],T.form)
  end
- 
+ end
 end
 
 # Writing the output state wavefunction for the qubits n where n can be an int or array of ints.
