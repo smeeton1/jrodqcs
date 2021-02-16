@@ -33,6 +33,7 @@ mutable struct qc_network
  edge 
  gates      
  init_state 
+ cbits
  out
  measure     
  indexs 
@@ -41,7 +42,7 @@ mutable struct qc_network
  solver   
  form   
  
- qc_network(q,v="Wave") = (qubit_N = q, indexs = parcing.Index_setup(q,v), init_state = [], gates = [], measure = [],out = [], edge = [], record =[[string(q)]],verbose = false,solver  = "Node",form    = v)
+ qc_network(q,v="Wave") = (qubit_N = q, indexs = parcing.Index_setup(q,v), init_state = [], cbits = [], gates = [], measure = [],out = [], edge = [], record =[[string(q)]],verbose = false,solver  = "Node",form    = v)
 end
 
 
@@ -73,6 +74,21 @@ function Find_pre_node(n,T)
        
     end
   return n1
+
+end
+
+function Set_Cbits(T,n,s="0")
+
+    if s == "0"
+        for i=1:n
+            push!(T.cbits,0)
+        end
+    else
+        for i=1:n
+            push!(T.cbits,eval(Meta.parse(s[i])))
+        end
+    end
+
 
 end
 

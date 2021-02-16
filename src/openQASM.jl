@@ -12,6 +12,12 @@ include("wave_comp.jl")
 include("noteb.jl")
 
 
+##################################################################
+#                                                                #
+# Structures to hold the data for gate function and registrars   #
+#                                                                #
+##################################################################
+
 mutable struct registar
    name
    l
@@ -26,6 +32,13 @@ mutable struct Name_gate
     gate
     Name_gate(v) = (name = v, paramaters = [], inputs = [], gate = [])
 end
+
+
+##################################################################
+#                                                                #
+# Basic function for sorting through input files                 #
+#                                                                #
+##################################################################
 
 function findchar(a,s)
    i=1
@@ -61,6 +74,35 @@ function splitequal(a)
     return s
     
 end
+
+function get_contained_string(a,n,target=',')
+    n1=findchar(a[n+2:end],target)+n+1
+    s=a[n+2:n1]
+    
+   return s,n1 
+end
+
+function split_onchar(a,s)
+             n=findchar(a,s) 
+             s=a[1:n]
+             ch=a[n+2:end]
+    return s, ch
+end
+
+function compress_string(a)
+   b=""
+   for i=1:length(a) 
+        b=b*a[i]
+   end
+   return b
+end
+
+
+##################################################################
+#                                                                #
+# Functions to set up gate and registrars data                   #
+#                                                                #
+##################################################################
 
 function qregis(a)
     n = findchar(a[2],'[')
