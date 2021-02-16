@@ -52,6 +52,20 @@ function findchar(a,s)
     end
 end
 
+function findChArray(a,s)
+    go=true
+    j=1
+    while go && j<length(a)
+           if findchar(a[j],s)<length(a[j]) 
+                go=false
+           else
+                j=j+1
+           end
+    end
+    return j
+end
+
+
 function splitequal(a)
     n=length(a)
     m=findchar(a[2],'=')
