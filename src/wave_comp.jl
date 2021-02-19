@@ -67,6 +67,41 @@ function UGateW(i::Index, j::Index,n1,n2,n3)
 
 end 
 
+function CUGateW(i::Index, j::Index, k::Index, l::Index)
+  A = ITensor(ComplexF64,i,j,k,l)
+
+  A[i(1),j(1),k(1),l(1)]=1.0
+  A[i(1),j(1),k(2),l(2)]=1.0
+
+  A[i(2),j(2),k(1),l(1)]=exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)
+  A[i(2),j(2),k(1),l(2)]=-exp(-1.0im*(n1-n2)/2.0)*sin(n3/2.0)
+  A[i(2),j(2),k(2),l(1)]=exp(1.0im*(n1-n2)/2.0)*sin(n3/2.0)
+  A[i(2),j(2),k(2),l(2)]=exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)
+  
+  return A
+
+end 
+
+
+function CCXGateW(i::Index, j::Index, k::Index, l::Index, m::Index, n::Index)
+  A = ITensor(ComplexF64,i,j,k,l)
+
+  A[i(1),j(1),k(1),l(1),m(1),n(1)]=1.0
+  A[i(1),j(1),k(1),l(1),m(2),n(2)]=1.0
+
+  A[i(1),j(1),k(2),l(2),m(1),n(1)]=1.0
+  A[i(1),j(1),k(2),l(2),m(2),n(2)]=1.0
+  
+  A[i(2),j(2),k(1),l(1),m(1),n(1)]=1.0
+  A[i(2),j(2),k(1),l(1),m(2),n(2)]=1.0
+  
+  A[i(2),j(2),k(2),l(2),m(2),n(1)]=1.0
+  A[i(2),j(2),k(2),l(2),m(1),n(2)]=1.0
+  
+  return A
+
+end 
+
 function HGateW(i::Index, j::Index)
   A = ITensor(ComplexF64,i,j)
 

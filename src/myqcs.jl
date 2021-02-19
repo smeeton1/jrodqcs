@@ -15,5 +15,6 @@ include("tensor_fun.jl")
 include("noteb.jl")
 include("wave.jl")
 include("wave_comp.jl")
+include("openQASM.jl")
 
 end
