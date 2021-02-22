@@ -41,7 +41,7 @@ function gate_setW(s,n,d)
      
    end
    
-   if s == "CN" || s == "CX"
+   if s == "CN" || s == "CX" || s == "iCX"
 
        Ham=wave_comp.CNotGateW(d[n[1],1],d[n[1],2],d[n[2],1],d[n[2],2]) 
      
@@ -105,6 +105,30 @@ function gate_setW(s,n,d)
    if s == "CR"
 
        Ham=wave_comp.CRGateW(d[n[1],1],d[n[1],2],d[n[2],1],d[n[2],2],n[3]) 
+     
+   end
+   
+   if s == "U"
+
+       Ham=wave_comp.UGateW(d[n[1],1],d[n[1],2],n[2],n[3],n[4]) 
+     
+   end
+   
+   if s == "iU"
+
+       Ham=wave_comp.UGateW(d[n[1],1],d[n[1],2],-n[2],-n[3],-n[4]) 
+     
+   end
+   
+   if s == "cU"
+
+       Ham=wave_comp.CUGateW(d[n[1],1],d[n[1],2],d[n[2],1],d[n[2],2],n[3],n[4],n[5]) 
+     
+   end
+   
+   if s == "CCX" || s == "cCX" || s == "iCCX"
+
+       Ham=wave_comp.CCXGateW(d[n[1],1],d[n[1],2],d[n[2],1],d[n[2],2],d[n[3],1],d[n[3],2]) 
      
    end
    

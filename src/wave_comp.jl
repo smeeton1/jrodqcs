@@ -67,7 +67,7 @@ function UGateW(i::Index, j::Index,n1,n2,n3)
 
 end 
 
-function CUGateW(i::Index, j::Index, k::Index, l::Index)
+function CUGateW(i::Index, j::Index, k::Index, l::Index,n1,n2,n3)
   A = ITensor(ComplexF64,i,j,k,l)
 
   A[i(1),j(1),k(1),l(1)]=1.0
