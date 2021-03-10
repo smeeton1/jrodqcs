@@ -59,6 +59,21 @@ function Set_init(T,s)
 
 end
  
+function Set_cinit(T,s)
+ for i=1:length(s)
+    push!(T.cbits,parse(Int,s[i]))
+ end
+ if length(T.record)<3
+   push!(T.record,[s])
+ else
+   s=[s," "]
+   splice!(T.record,3:2,[s])
+ end
+
+
+end
+ 
+ 
 # Finds the node proceeding current node being added. Takes qubit and network. 
 function Find_pre_node(n,T)
    n1=n
