@@ -592,8 +592,7 @@ function create_networkinputs(a,c,r,g,v=false)
     while i<length(a)+1
         #println(a[i])
         for j=1:length(r)
-            if a[i][1][1:
-                findchar(a[i][1],'=')]==r[j].name
+            if a[i][1][1:findchar(a[i][1],'=')]==r[j].name
                 set_init(a[i],r[j])
             end
         end
