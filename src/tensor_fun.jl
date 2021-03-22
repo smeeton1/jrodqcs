@@ -37,30 +37,7 @@ function Par_Trac(T::ITensor, I::Index)
 
 end
 
-# Performs a measurement on qubit Q returning 1 or 0 for state of the qubit
-function Q_Meas(Q)
- i=0
- while i<30
-  x=bitrand()
-  if x[1]
-   if rand() < abs(Q[1])
-    return 1
-   end
-  else
-   if rand() < abs(Q[4])
-    return 0
-   end
-  end
-  i=i+1
- end
- x =bitrand()
- if x[1]
-    return 1
- else
-    return 0
- end
 
-end 
 
 function Tproduct(T)
   h=T[1]
