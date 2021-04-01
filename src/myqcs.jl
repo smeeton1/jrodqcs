@@ -16,5 +16,6 @@ include("noteb.jl")
 include("wave.jl")
 include("wave_comp.jl")
 include("openQASM.jl")
+include("measure.jl")
 
 end

@@ -432,9 +432,14 @@ end
 
 function Trace(i::Index)
   A = ITensor(ComplexF64,i)
-
-  A[i(1)]=1.0
-  A[i(4)]=1.0
+  
+  if dim(i)==4
+    A[i(1)]=1.0
+    A[i(4)]=1.0
+  else
+    A[i(1)]=1.0
+    A[i(2)]=1.0
+  end
 
   return A
 
