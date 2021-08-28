@@ -10,6 +10,9 @@ include("parcing.jl")
 include("tensor_fun.jl")
 
 
+
+
+
 # Performs a measurement on qubit Q returning 1 or 0 for state of the qubit
 function Q_Meas(Q,t)
  i=0

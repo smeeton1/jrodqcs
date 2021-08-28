@@ -445,4 +445,10 @@ function Trace(i::Index)
 
 end 
 
+function MeasureT(i::Index,j::Index)
+  A = ITensor(ComplexF64,i,j)
+  return A
+
+end 
+
 end

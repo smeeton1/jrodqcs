@@ -47,6 +47,26 @@ function Tproduct(T)
   return h
 end
 
+function measurebit(T,M,H,C,verbose)
+
+  indexs=inds(H)
+  
+  if dim(indexs[1])==2
+    form= "Wave"
+  else
+    form= "Density"
+  end
+  if indexs[1] in inds(T)
+    qn = indexs[1]
+  else
+    qn = indexs[2]
+  end
+  
+  T,C[M[3]]=measure_out(T,qn,100,form,verbose)
+  return T,C
+
+end
+
 ##########
 #
 # Functions for working with graph edges.
@@ -76,10 +96,19 @@ function Search_edge_1(T,n)
 end
 
 # Contracts a node into the state B according to the edge E, with H being the array of gates and n the number of qubits.
-function Edge_contract(B,H,E,n)
+function Edge_contract(B,H,E,n,M,C,verbose)
  i=E[2]-n
- B=B*H[i]
- return B
+ if M[i][1]=="m"
+   B,C = measurebit(B,M[i],H[i],C,verbose)
+ 
+ elseif M[i][1] != -1
+   if C[M[i][1]]
+    B=B*H[i]
+   end
+ else
+    B=B*H[i]
+ end
+ return B,C
 end
  
 ##########
@@ -160,12 +189,21 @@ function Ten_split(T)
 end
 
 # Performs a line contraction. This function contracts along a single index.
-function line_mps(Q,T)
+function line_mps(Q,T,M,C,verbose)
  N=size(T,1)
  index=inds(Q)
  for i=1:N
    if hasinds(T[i],index)
-     Q=Q*T[i]
+     if M[i][1] == "m"
+       Q,C=measurebit(Q,M[i],T[i],C,verbose)
+     elseif M[i][1] !=-1
+       if C[M[i][1]] == 1
+         Q=Q*T[i]
+       end
+     
+     else
+        Q=Q*T[i]
+     end
   
    end
   
@@ -176,12 +214,12 @@ function line_mps(Q,T)
 end
 
 # Performs line contractions for each qubit combines the lines and then traces out the final state for each qubit. 
-function Contract_Lines(Q,H)
+function Contract_Lines(Q,H,M,Cb,verbose)
  N=size(Q,1)
  A=[]
  C=copy(Q)
  for i=1:N
-   push!(A,line_mps(C[i],H))
+   push!(A,line_mps(C[i],H,M,Cb,verbose))
  end
  B=A[1]*A[2]
  for i=3:N
@@ -199,7 +237,7 @@ function Contract_Lines(Q,H)
 end
 
 #Performs a nodal contraction by depth and traces out the final state for each qubit.
-function Contract_Node(Q,H,E,verbose,depth)
+function Contract_Node(Q,H,E,M,C,verbose,depth)
 #need to contract by column/ depth
 #need to skip rows when no gate in (check multi row gates to see if skip)
  N=length(Q)+length(H)
@@ -214,11 +252,11 @@ function Contract_Node(Q,H,E,verbose,depth)
  D=1
  while length(Et)>0 && D < depth
   if verbose == true
-   println("D=",D)
+   println("Depth=",D)
    println("N=",N)
-   println("E_L=",length(Et))
-   println("Q_L=", length(Bh))
-   println("E=",Et)
+   println("Edge List Length=",length(Et))
+   println("Gate List Length=", length(Bh))
+   println("Edge List=",Et)
   end
   D=D+1
   a=[]
@@ -279,7 +317,7 @@ function Contract_Node(Q,H,E,verbose,depth)
    if length(a[i])>0
      for j=1:length(N)
      if Et[a[i][1]][1] in N[j] && !(parcing.isin(N,Et[a[i][1]][2]) ) #(isassigned(N,Et[a[i][1]][2] ))
-      Bh[j]=Edge_contract(Bh[j],H,Et[a[i][1]],n)
+      Bh[j],C=Edge_contract(Bh[j],H,Et[a[i][1]],n,M,C,verbose)
       if length(N[j]) > 1
        for k=1:length(N[j])
         if Et[a[i][1]][1] == N[j][k]

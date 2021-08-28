@@ -115,10 +115,17 @@ end
 function Add_gate(T,g,n) 
  if isa(g,Array) 
   for i=1:length(g)
-    if T.form == "Density" 
-        push!(T.gates,parcing.gate_set(g[i],n[i],T.indexs))
+    if g[i] == "m"
+       push!(T.gates,ITensor(ComplexF64,T.indexs[n[i][1],1],T.indexs[n[i][1],2]))
+       push!(T.measure,g[i],n[i])
     else
-        push!(T.gates,wave.gate_setW(g[i],n[i],T.indexs)) 
+        if T.form == "Density" 
+            push!(T.gates,parcing.gate_set(g[i],n[i],T.indexs))
+            push!(T.measure,-1)
+        else
+            push!(T.gates,wave.gate_setW(g[i],n[i],T.indexs))
+            push!(T.measure,-1)
+        end
     end
     push!(T.record,[g[i],string(n[i])])
     if length(T.edge)<1
@@ -372,10 +379,10 @@ function Contract(T,Depth::Int64=1000)
   println(T.solver)
  end
  if T.solver == "Line"
-  push!(T.out,tensor_fun.Contract_Lines(T.init_state[1],T.gates))
+  push!(T.out,tensor_fun.Contract_Lines(T.init_state[1],T.gates,T.measure,T.cbits,T.verbose))
  end
  if T.solver == "Node"
-  push!(T.out,tensor_fun.Contract_Node(T.init_state[1],T.gates,T.edge,T.verbose,Depth))
+  push!(T.out,tensor_fun.Contract_Node(T.init_state[1],T.gates,T.edge,T.measure,T.cbits,T.verbose,Depth))
  end
 
 end

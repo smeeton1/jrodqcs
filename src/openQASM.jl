@@ -575,7 +575,94 @@ function apply_ng(a,r,g,gate,qbit,mod= "none")
   end
 
   return gate,qbit
+  
 end
+
+##################################################################
+#                                                                #
+# Functions to set up measurement                                #
+#                                                                #
+##################################################################
+
+function read_measure(a)
+  #println(a)
+  #println(findfirst("measure",a))
+  n=findfirst("measure",a)
+  m=n[end]
+  n=n[1]
+  l=findchar(a,';')
+  #println(n," ",m," ",l)
+  if n ==1
+    k=findfirst("->",a)
+    j=k[end]
+    k=k[1]
+    b=a[m+1:k-1]
+    c=a[j+1:l]
+    #println(b)
+    #println(c)
+  else
+    k=findchar(a,'=')
+    b=a[1:k]
+    c=a[m+1:l]
+    #println(b)
+    #println(c)       
+  end
+  return b,c 
+    
+end
+
+
+function set_measure(a, qreg,creg,d,e,v)
+    b,c = read_measure(a)
+    if v
+        println(b)
+        println(c)
+    end
+    if findchar(b,'[')<length(b)
+        n=give_qbit(b,r)
+        m=give_qbit(c,r)
+        return "m",[n,m]
+    else
+        n=0
+        m=0
+        l=1
+        k=1
+        while b != qreg[l].name && l<length(qreg)
+            l = l+1
+        end
+
+        while c != creg[k].name && k<length(creg)
+            k = k+1
+        end
+        if creg[k].l != qreg[l].l
+            println("Registries are not the same length")
+        else
+            if l > 1
+                for i=1:l-1
+                    n=n+qreg[i].l
+                end
+            end
+            if k > 1
+                for i=1:k-1
+                    m=m+creg[i].l
+                end
+            end
+            d=[]
+            e=[]
+            for i = 1:qreg[l].l
+                push!(d,"m")
+                push!(e,[n+i-1,m+i-1])
+            end
+            return d,e
+            
+        end
+        
+    end
+    
+    
+end
+
+
 
 ##################################################################
 #                                                                #
@@ -621,6 +708,10 @@ function create_networkinputs(a,c,r,g,v=false)
         end
         if a[i][1] == "CX" || a[i][1] == "CCX" || a[i][1][1] == 'U' || a[i][1] == "ctrl" || a[i][1] == "inv" || a[i][1][1:findchar(a[i][1],'[')] == "pow"
            gate,qbit= apply_g(a[i],r,g,gate,qbit)
+        end
+        b=compress_string(a[i])
+        if occursin("measure", b)
+           gate,qbit= set_measure(b,r,c,gate,qbit,v)
         end
         if v
             println(gate)
