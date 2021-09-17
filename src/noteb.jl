@@ -42,7 +42,7 @@ mutable struct qc_network
  solver   
  form   
  
- qc_network(q,v="Wave") = (qubit_N = q, indexs = parcing.Index_setup(q,v), init_state = [], cbits = [], gates = [], measure = [],out = [], edge = [], record =[[string(q)]],verbose = false,solver  = "Node",form    = v)
+ qc_network(q,f="Wave",v=false) = (qubit_N = q, indexs = parcing.Index_setup(q,f), init_state = [], cbits = [], gates = [], measure = [],out = [], edge = [], record =[[string(q)]],verbose = v,solver  = "Node",form    = f)
 end
 
 
@@ -161,8 +161,10 @@ function Add_gate(T,g,n)
  else
   if T.form == "Density" 
         push!(T.gates,parcing.gate_set(g,n,T.indexs))
+        push!(T.measure,-1)
   else
         push!(T.gates,wave.gate_setW(g,n,T.indexs)) 
+        push!(T.measure,-1)
   end
   push!(T.record,[g,string(n)])
   if length(T.edge)<1
@@ -339,8 +341,10 @@ function Split_N(T)
     U,S,V =svd(V,(index[1],index[2],index(n)))
     U=U*S
     push!(T.gates,U)
+    push!(T.measure,T.measure[i])
    end
    push!(T.gates,V)
+   push!(T.measure,T.measure[i])
    a=tensor_fun.Search_edge(T.edge,i+T.qubit_N)
    m=length(T.gates)+T.qubit_N
    for j=2:length(a)

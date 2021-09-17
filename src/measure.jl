@@ -7,7 +7,6 @@ using DelimitedFiles
 include("component_def.jl")
 include("wave_comp.jl")
 include("parcing.jl")
-include("tensor_fun.jl")
 
 
 
