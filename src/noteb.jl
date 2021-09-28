@@ -159,12 +159,17 @@ function Add_gate(T,g,n)
     end
   end
  else
-  if T.form == "Density" 
+  if g == "m"
+       push!(T.gates,ITensor(ComplexF64,T.indexs[n,1],T.indexs[n,2]))
+       push!(T.measure,g,n)
+  else
+    if T.form == "Density" 
         push!(T.gates,parcing.gate_set(g,n,T.indexs))
         push!(T.measure,-1)
-  else
+    else
         push!(T.gates,wave.gate_setW(g,n,T.indexs)) 
         push!(T.measure,-1)
+    end
   end
   push!(T.record,[g,string(n)])
   if length(T.edge)<1
