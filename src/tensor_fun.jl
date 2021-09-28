@@ -15,28 +15,7 @@ include("measure.jl")
 
 export Ten_Add, Ten_split, line_mps, Contract_Lines, Contract_Node, Q_Meas,  Search_edge, Search_edge_1, Edge_contract
  
-# Performs a partial trace for index I of tensor T.  
-function Par_Trac(T::ITensor, I::Index)
- if hasinds(T,I)
 
-  index=inds(T)
-
-  A=T
-  for j=1:length(index)
-    if index[j]!=I
-     temp= component_def.Trace(index[j])
-     A= A*temp
-    end
-
-  end
-  return A
- else
-  #println(I, "is not in T")
-  return T
- end
-
-
-end
 
 
 
@@ -63,7 +42,7 @@ function measurebit(T,M,H,C,verbose)
     qn = indexs[2]
   end
   
-  T,C[M[3]]=measure_out(T,qn,100,form,verbose)
+  T,C[M[3]]=measure.measure_out(T,qn,100,form,verbose)
   return T,C
 
 end
@@ -230,7 +209,7 @@ function Contract_Lines(Q,H,M,Cb,verbose)
 #  #println(index)
 #  #println(length(index))
 #  for j=1:N
-#   A[j]=Par_Trac(B, index[j])
+#   A[j]=measure.Par_Trac(B, index[j])
 #   #println("o= ",order(A[j]))
 #  end
  return B

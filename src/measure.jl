@@ -9,7 +9,28 @@ include("wave_comp.jl")
 include("parcing.jl")
 
 
+# Performs a partial trace for index I of tensor T.  
+function Par_Trac(T::ITensor, I::Index)
+ if hasinds(T,I)
 
+  index=inds(T)
+
+  A=T
+  for j=1:length(index)
+    if index[j]!=I
+     temp= component_def.Trace(index[j])
+     A= A*temp
+    end
+
+  end
+  return A
+ else
+  #println(I, "is not in T")
+  return T
+ end
+
+
+end
 
 
 # Performs a measurement on qubit Q returning 1 or 0 for state of the qubit
@@ -39,7 +60,7 @@ end
 
 function Get_Measure_stat(T,qn,t,v,form)
 
-  A=tensor_fun.Par_Trac(T, qn)
+  A=Par_Trac(T, qn)
   Q=[]
   if form == "Wave"
     push!(Q,A[1]/sqrt(A[1]*A[1]+A[2]*A[2])*A[1]/sqrt(A[1]*A[1]+A[2]*A[2]))
