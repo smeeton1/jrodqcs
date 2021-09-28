@@ -117,7 +117,7 @@ function Add_gate(T,g,n)
   for i=1:length(g)
     if g[i] == "m"
        push!(T.gates,ITensor(ComplexF64,T.indexs[n[i][1],1],T.indexs[n[i][1],2]))
-       push!(T.measure,[g[i],n[i]])
+       push!(T.measure,[g[i],n[i][1],n[i][2]])
     else
         if T.form == "Density" 
             push!(T.gates,parcing.gate_set(g[i],n[i],T.indexs))
@@ -160,8 +160,8 @@ function Add_gate(T,g,n)
   end
  else
   if g == "m"
-       push!(T.gates,ITensor(ComplexF64,T.indexs[n,1],T.indexs[n,2]))
-       push!(T.measure,[g,n])
+       push!(T.gates,ITensor(ComplexF64,T.indexs[n[1],1],T.indexs[n[1],2]))
+       push!(T.measure,[g,n[1],n[2]])
   else
     if T.form == "Density" 
         push!(T.gates,parcing.gate_set(g,n,T.indexs))

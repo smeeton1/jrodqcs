@@ -131,23 +131,29 @@ function measure_out(T,qn,t=100,form="Wave",v=false)
 
   M = Get_Measure_stat(T,qn,t,v,form)
   if v == true
-    println(M)
+    println("M= ",M)
+    println("inds T = ",length(inds(T)) )
   end
-  A = create_newstate(T,qn,M,v)
-  if form == "Wave"
+  if length(inds(T)) > 1
+    A = create_newstate(T,qn,M,v)
+  else
+    A=M
+  end
+  if v == true
+    println("A= ",A)
+  end
+ 
+ 
     if M[1] == 1
         c=0
     else
         c=1
     end
-  else
-      if M[1] == 1
-        c=1
-    else
-        c=0
-    end
-  
+  if v == true
+    println("C= ",c)
   end
+ 
+ 
 
   return A, c
 end

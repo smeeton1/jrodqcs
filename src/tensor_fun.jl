@@ -41,6 +41,9 @@ function measurebit(T,M,H,C,verbose)
   else
     qn = indexs[2]
   end
+  if verbose
+   println(form)
+  end
   
   T,C[M[3]]=measure.measure_out(T,qn,100,form,verbose)
   return T,C
