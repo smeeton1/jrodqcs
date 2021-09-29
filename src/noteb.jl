@@ -313,12 +313,13 @@ function Split(T)
  if T.solver == "Line"
    Split_L(T);
  else
-   Split_N(T);
+   Split_N(T,T.verbose);
  end
 end
 
-function Split_L(T)
+function Split_L(T,v)
  fin=[]
+ mfin=[]
  N = size(T.gates,1)
  hold = ITensor(ComplexF64,T.indexs[1,1])
  for i=1:N
@@ -327,6 +328,7 @@ function Split_L(T)
    U,S,V =svd(T.gates[i],(index[1],index[2])) 
    U=U*S
    push!(fin,U)
+   push!(mfin,T.measure[i])
    push!(T.gates,hold)
    while order(V)>3
     index=inds(V)
@@ -334,19 +336,23 @@ function Split_L(T)
     U,S,V =svd(V,(index[1],index[2],index(n)))
     U=U*S
     push!(fin,U)
+    push!(mfin,T.measure[i])
     push!(T.gates,hold)
    end
    push!(fin,V)
+   push!(mfin,T.measure[i])
   
   else
    push!(fin,T.gates[i])
+   push!(mfin,T.measure[i])
   end
  
  end
  T.gates[:] = fin;
+ T.measure[:] = mfin
 end
 
-function Split_N(T)
+function Split_N(T,v)
  
  N = size(T.gates,1)
  for i=1:N
@@ -367,6 +373,9 @@ function Split_N(T)
    push!(T.gates,V)
    push!(T.measure,T.measure[i])
    a=tensor_fun.Search_edge(T.edge,i+T.qubit_N)
+   if v
+    println(a)
+   end
    m=length(T.gates)+T.qubit_N
    for j=2:length(a)
     if j<=l 
