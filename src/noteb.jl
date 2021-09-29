@@ -129,7 +129,7 @@ function Add_gate(T,g,n)
     end
     push!(T.record,[g[i],string(n[i])])
     if length(T.edge)<1
-     if isa(n[i],Array)
+     if isa(n[i],Array) && g[i] != "m"
       if g[i] == "CR" || g[i] == "CP" || g[i] == "Rx" || g[i] == "Ry" || g[i] == "Rz"
        for j=1:length(n[i])-1
         push!(T.edge,[Int64(n[i][j]),T.qubit_N+1])
@@ -140,10 +140,14 @@ function Add_gate(T,g,n)
        end
       end
      else
-      push!(T.edge,[n[i],T.qubit_N+1])
+      if g[i]=="m"
+        push!(T.edge,[n[i][1],T.qubit_N+1])
+      else
+        push!(T.edge,[n[i],T.qubit_N+1])
+      end
      end
     else
-     if isa(n[i],Array)
+     if isa(n[i],Array) && g[i] != "m"
        if g[i] == "CR" || g[i] == "CP" || g[i] == "Rx" || g[i] == "Ry" || g[i] == "Rz"
         for j=1:length(n[i]) -1
          push!(T.edge,[Find_pre_node(Int64(n[i][j]),T),T.qubit_N+length(T.gates)])
@@ -154,7 +158,11 @@ function Add_gate(T,g,n)
         end
        end
      else
-      push!(T.edge,[Find_pre_node(n[i],T),T.qubit_N+length(T.gates)])
+      if g[i] == "m"
+        push!(T.edge,[Find_pre_node(n[i][1],T),T.qubit_N+length(T.gates)])
+      else
+        push!(T.edge,[Find_pre_node(n[i],T),T.qubit_N+length(T.gates)])
+      end
      end
     end
   end
@@ -173,7 +181,7 @@ function Add_gate(T,g,n)
   end
   push!(T.record,[g,string(n)])
   if length(T.edge)<1
-    if isa(n,Array)
+    if isa(n,Array) && g!= "m"
       if g == "CR" || g == "CP" || g == "Rx" || g == "Ry" || g == "Rz"
        
        for j=1:length(n)-1
@@ -185,10 +193,14 @@ function Add_gate(T,g,n)
        end
       end
      else
-      push!(T.edge,[n,T.qubit_N+1])
+      if g == "m"
+        push!(T.edge,[n[1],T.qubit_N+1])
+      else
+        push!(T.edge,[n,T.qubit_N+1])
+      end
      end
   else
-   if isa(n,Array)
+   if isa(n,Array) && g!= "m"
     if g == "CR" || g == "CP" || g == "Rx" || g == "Ry" || g == "Rz"
      for j=1:length(n)-1
        push!(T.edge,[Find_pre_node(Int64(n[j]),T),T.qubit_N+length(T.gates)]);
@@ -199,7 +211,11 @@ function Add_gate(T,g,n)
      end
     end
    else
-    push!(T.edge,[Find_pre_node(n,T),T.qubit_N+length(T.gates)]);
+    if g == "m"
+        push!(T.edge,[Find_pre_node(n[1],T),T.qubit_N+length(T.gates)]);
+    else
+        push!(T.edge,[Find_pre_node(n,T),T.qubit_N+length(T.gates)]);
+    end
    end
   end
  end

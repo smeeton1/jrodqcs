@@ -85,7 +85,7 @@ function Edge_contract(B,H,E,n,M,C,verbose)
    B,C = measurebit(B,M[i],H[i],C,verbose)
  
  elseif M[i][1] != -1
-   if C[M[i][1]]
+   if C[M[i][1]] == 1
     B=B*H[i]
    end
  else
