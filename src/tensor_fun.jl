@@ -196,6 +196,24 @@ function line_mps(Q,T,M,C,verbose)
 
 end
 
+
+# A simple solver that combines the qbits and then applies the gates in the order the were added. This method does not require a split.
+function simple_solver(T)
+    
+    n=length(T.init_state[1])
+    m=length(T.gates)
+    push!(T.out,T.init_state[1][1])
+    for i=2:n
+        T.out[1]=T.out[1]*T.init_state[1][i]
+    end
+    for i=1:m
+        T.out[1]=T.out[1]*T.gates[i]
+    end
+    
+    return T
+    
+end
+
 # Performs line contractions for each qubit combines the lines and then traces out the final state for each qubit. 
 function Contract_Lines(Q,H,M,Cb,verbose)
  N=size(Q,1)
