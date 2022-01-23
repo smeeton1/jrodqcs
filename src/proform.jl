@@ -12,12 +12,42 @@ module proform
 using ITensors
 include("noteb.jl")
 
-function flop_estimate()
-
-fsum=0.0
 
 
-return fsum
+###########################################################################
+#
+# Function to estimate the number of flops used.
+#
+###########################################################################
+
+
+function check_ind(ind1,ind2)
+    fsum=0.0
+
+    for i=1:length(ind1)
+     for j=1:length(ind2)
+        if id(ind1[i])==id(ind2[j])
+            fsum+=dim(ind1[i])
+        end
+     end
+    end
+    
+    return fsum
+
+end
+
+
+function flop_estimate(G1,G2)
+
+    fsum=0.0
+
+    ind1=inds(G1)
+    ind2=inds(G2)
+
+    fsun = check_ind(ind1,ind2)
+
+
+    return fsum
 
 end
 
