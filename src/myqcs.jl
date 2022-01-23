@@ -18,5 +18,6 @@ include("wave_comp.jl")
 include("openQASM.jl")
 include("measure.jl")
 include("noise.jl")
+include("proform.jl")
 
 end
