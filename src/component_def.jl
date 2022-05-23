@@ -376,6 +376,33 @@ function SWGate(i::Index, j::Index, k::Index, l::Index)
 
 end 
 
+function UGateW(i::Index, j::Index,n1,n2,n3)
+  A = ITensor(ComplexF64,i,j)
+
+  A[i(1),j(1)]=exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)*exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)
+  A[i(1),j(2)]=exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)*-exp(-1.0im*(n1-n2)/2.0)*sin(n3/2.0)
+  A[i(1),j(3)]=exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)*exp(1.0im*(n1-n2)/2.0)*sin(n3/2.0)
+  A[i(1),j(4)]=exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)*exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)
+  
+  A[i(2),j(1)]=-exp(-1.0im*(n1-n2)/2.0)*sin(n3/2.0)*exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)
+  A[i(2),j(2)]=-exp(-1.0im*(n1-n2)/2.0)*sin(n3/2.0)*-exp(-1.0im*(n1-n2)/2.0)*sin(n3/2.0)
+  A[i(2),j(3)]=-exp(-1.0im*(n1-n2)/2.0)*sin(n3/2.0)*exp(1.0im*(n1-n2)/2.0)*sin(n3/2.0)
+  A[i(2),j(4)]=-exp(-1.0im*(n1-n2)/2.0)*sin(n3/2.0)*exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)
+  
+  A[i(3),j(1)]=exp(1.0im*(n1-n2)/2.0)*sin(n3/2.0)*exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)
+  A[i(3),j(2)]=exp(1.0im*(n1-n2)/2.0)*sin(n3/2.0)*-exp(-1.0im*(n1-n2)/2.0)*sin(n3/2.0)
+  A[i(3),j(3)]=exp(1.0im*(n1-n2)/2.0)*sin(n3/2.0)*exp(1.0im*(n1-n2)/2.0)*sin(n3/2.0)
+  A[i(3),j(4)]=exp(1.0im*(n1-n2)/2.0)*sin(n3/2.0)*exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)
+
+  A[i(4),j(1)]=exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)*exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)
+  A[i(4),j(2)]=exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)*-exp(-1.0im*(n1-n2)/2.0)*sin(n3/2.0)
+  A[i(4),j(3)]=exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)*exp(1.0im*(n1-n2)/2.0)*sin(n3/2.0)
+  A[i(4),j(4)]=exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)*exp(1.0im*(n1+n2)/2.0)*cos(n3/2.0)
+  
+  return A
+
+end
+
 ##
 #
 # Measurements

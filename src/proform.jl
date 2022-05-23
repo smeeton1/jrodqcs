@@ -27,7 +27,7 @@ function check_ind(ind1,ind2)
     for i=1:length(ind1)
      for j=1:length(ind2)
         if id(ind1[i])==id(ind2[j])
-            fsum+=dim(ind1[i])
+            fsum+=2*dim(ind1[i])
         end
      end
     end

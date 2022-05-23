@@ -7,10 +7,13 @@
 module noise
 
 using ITensors
+using ITensors
+using Random
+using DelimitedFiles
 include("component_def.jl")
 include("parcing.jl")
 
-
+# Sets a tensor for use in noise creation.
 function set_Aeth(i::Index, j::Index,e)
 
     A = ITensor(ComplexF64,i,j)
@@ -26,15 +29,17 @@ function set_Aeth(i::Index, j::Index,e)
 
 end
 
+# Creates a dephasing noise tensor.
 function DPh_noise_1qb(e,G)
 
     indexs=inds(G)
     g= (1-e)*myqcs.component_def.IGate(indexs[1],indexs[2]) + e*myqcs.component_def.ZGate(indexs[1],indexs[2])
-    #println(g)
     return g #Dag_mult(g,G,4)
 
 end
 
+
+# Creates a depolarizing noise tensor.
 function DPo_noise_1qb(e,G)
 
     indexs=inds(G)
@@ -43,6 +48,8 @@ function DPo_noise_1qb(e,G)
 
 end
 
+
+# Adds amplitude damping noise to the gate.
 function AD_noise_1qb(e,G)
 
     indexs=inds(G)
@@ -51,6 +58,7 @@ function AD_noise_1qb(e,G)
     
 end
 
+# Creates a dephasing noise tensor for a 2 qubit gate.
 function DPh_noise_2qb(e,G)
 
     indexs=inds(G)
@@ -61,6 +69,7 @@ function DPh_noise_2qb(e,G)
 
 end
 
+# Adds amplitude damping noise to a 2 qubit gate.
 function AD_noise_2qb(e,G)
 
     indexs=inds(G)
@@ -69,6 +78,7 @@ function AD_noise_2qb(e,G)
     
 end
 
+# Creates a depolarizing noise tensor for a 2 qubit gate.
 function DPo_noise_2qb(e,G)
 
     indexs=inds(G)
@@ -76,6 +86,13 @@ function DPo_noise_2qb(e,G)
     return g #Mat_mult(G,g,4)
 
 end
+
+#################################################################################
+#
+# The following functions choose between one or two qubit gates for the noise.
+#
+##################################################################################
+
 
 function noise_DPO(G,e)
     
@@ -112,13 +129,13 @@ function nosie_DPH(G,e)
     
 end
 
+
+
+# Sets the edge for the noise tensors.
 function fix_edge(edge,n,m,order)
     
-    #println(n+3)
-    #println(m+3)
     add=true
     for i=1:length(edge)
-        #println(edge[i])
         if edge[i][1]==n+3
             hold = edge[i][2]
             edge[i][2] = m+3
@@ -140,6 +157,9 @@ function fix_edge(edge,n,m,order)
 
 end
 
+
+
+#function to add type of noise to the gates.
 function add_nosie_gate(T,e,n)
     
     if length(e)==3
@@ -173,12 +193,11 @@ function add_nosie_gate(T,e,n)
     
 end
 
-
+# Adds noise for a constant e.
 function add_nosie_eco(T,e)
-   #println(length(T.gates))
+   
    n=length(T.gates)
    for i=1:n
-        #println(i)
         T=add_nosie_gate(T,e,i)
    end
     
@@ -186,7 +205,9 @@ function add_nosie_eco(T,e)
     
 end
 
+# Adds noise for a variable e.
 function add_nosie_ech(T,e)
+
    for i=1:length(T.gates) 
         T=add_nosie_gate(T,e[i],i)
    end
@@ -195,6 +216,7 @@ function add_nosie_ech(T,e)
     
 end
 
+# Master Noise adding function
 function add_nosie(T,e)
     
     if length(e)==length(T.gates)
