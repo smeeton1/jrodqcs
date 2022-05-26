@@ -256,17 +256,7 @@ end
 #
 ##########
 
-# Writes an output file
-function Write_OutPutFile(a,OutFile)
 
- io=open(OutFile, "w")
-#   for i=1:length(a)
-#     println(a[i])
-    writedlm(io,a," ")
-#  end
- close(io)
-
-end
 
 function Fun_W(i,L,W)
     if length(L)>1
@@ -393,6 +383,73 @@ function write_density_out(T,form)
 
 end
 
+# Writes an output file
+function Write_OutPutFile_wave(T,form,OutFile)
 
+ io=open(OutFile, "w")
+
+    if form == "Density"
+      println("There is no Wave function")
+    else
+    B=order(T)
+    if B>1
+       N=length(T.store) 
+       P=zeros(ComplexF64,N)
+       lim=[]
+       W=[]
+       for i=1:B 
+           push!(lim,N/(2^i))
+           push!(W,2^(i-1))
+       end  
+       for i=1:N 
+            P[i]=T.store[Fun_W(i,lim,W)]
+       end
+       for i=1:N
+         writedlm(io,P[i],"\n") 
+       end
+        
+    else
+       writedlm(io,T.store,"\n")
+    end
+    end
+
+
+#  end
+ close(io)
+
+end
+
+function Write_OutPutFile_dens(T,form,OutFile)
+
+ io=open(OutFile, "w")
+
+    if form == "Density" 
+    N=length(T.store)
+    M=N/4
+    A=isqrt(N)
+    B=order(T)
+    if B ==1
+        P=transpose(reshape(T.store,A,A))
+    else    
+        P=zeros(ComplexF64,A,A)
+        for i=1:A
+            for j=1:A
+                P[i,j]=T.store[Fun_A(j,i,A,B)]  
+            end
+        end
+    end
+
+    for i=1:A
+        writedlm(io,P[i,:],"\n")
+    end
+    else
+     println("There is no density matrix")
+    end
+
+
+#  end
+ close(io)
+
+end
 
 end

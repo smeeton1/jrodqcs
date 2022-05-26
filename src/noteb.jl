@@ -42,7 +42,7 @@ mutable struct qc_network
  solver   
  form   
  
- qc_network(q,f="Wave",v=false) = (qubit_N = q, indexs = parcing.Index_setup(q,f), init_state = [], cbits = [], gates = [], measure = [],out = [], edge = [], record =[[string(q)]],verbose = v,solver  = "Node",form    = f)
+ qc_network(q,f="Wave",v=false,s="Node") = (qubit_N = q, indexs = parcing.Index_setup(q,f), init_state = [], cbits = [], gates = [], measure = [],out = [], edge = [], record =[[string(q)]],verbose = v,solver  = s,form    = f)
 end
 
 

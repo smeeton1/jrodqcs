@@ -282,7 +282,7 @@ function Contract_Node(Q,H,E,M,C,verbose,depth)
    end
   end
   if verbose == true
-    println(n1)
+    println("n=",n1)
   end
   for i=1:length(n1)
    if order(H[n1[i][3]-n])>2
@@ -317,10 +317,12 @@ function Contract_Node(Q,H,E,M,C,verbose,depth)
   for i=1:length(a)
    if length(a[i])>0
      for j=1:length(N)
+     
      if Et[a[i][1]][1] in N[j] && !(parcing.isin(N,Et[a[i][1]][2]) ) #(isassigned(N,Et[a[i][1]][2] ))
       Bh[j],C=Edge_contract(Bh[j],H,Et[a[i][1]],n,M,C,verbose)
       if length(N[j]) > 1
        for k=1:length(N[j])
+        
         if Et[a[i][1]][1] == N[j][k]
          N[j][k] = Et[a[i][1]][2]
         end
@@ -330,21 +332,30 @@ function Contract_Node(Q,H,E,M,C,verbose,depth)
       end
      else
       for k=1:length(N)
-       if j!=k && Et[a[i][1]][1] in N[j] && Et[a[i][1]][2] in N[k]
-         Bh[j]=Bh[j]*Bh[k]
-         N[j]=[N[j],N[k]]
-         deleteat!(Bh,k)
-         rm=rm+1
-         for l=k:length(N)-1
-          N[l]=N[l+1]
-         end
+       if j!=k && Et[a[i][1]][1] in N[j] && Et[a[i][1]][2] in N[k] 
+         #println(j,k)
+         #println(length(Bh))
+         if  length(Bh) >j &&  length(Bh) > k
+            Bh[j]=Bh[j]*Bh[k]
+            N[j]=[N[j],N[k]]
+            deleteat!(Bh,k)
+            rm=rm+1
+            #println(rm)
+            #println(N)
+            for l=k:length(N)-1
+                N[l]=N[l+1]
+            end
+        end
+         #println("hello")
          #deleteat!(N,k)
        end
      end
+     
      end
      end
    end
   end
+  #println(N)
   for i=1:rm
     pop!(N);
   end
