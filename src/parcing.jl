@@ -452,4 +452,28 @@ function Write_OutPutFile_dens(T,form,OutFile)
 
 end
 
+
+######################################################
+#
+# function to turn tensors into a density matrix
+#
+#######################################################
+function makematrix(C)
+    N=length(C.store)
+    M=N/4
+    A=isqrt(N)
+    B=order(C)
+    if B ==1
+        P=transpose(reshape(C.store,A,A))
+    else    
+        P=zeros(ComplexF64,A,A)
+        for i=1:A
+            for j=1:A
+                P[i,j]=C.store[Fun_A(j,i,A,B)]  
+            end
+        end
+    end
+    return P
+end
+
 end

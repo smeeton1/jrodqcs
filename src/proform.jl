@@ -11,6 +11,7 @@ module proform
 
 using ITensors
 include("noteb.jl")
+include("parcing.jl")
 
 
 
@@ -50,6 +51,31 @@ function flop_estimate(G1,G2)
     return fsum
 
 end
+
+################################################################
+#
+# calculates the fidelity of two tensors using eigenvaules
+#
+################################################################
+function fidelity(A,B)
+   
+    
+    AM=parcing.makematrix(A)
+    BM=parcing.makematrix(B)
+    la,va =eigen(AM, sortby = x -> -abs(x))
+    lb,vb =eigen(BM, sortby = x -> -abs(x))
+    
+    println(la)
+    println(lb)
+    
+    sum=0
+    for i=1:length(lb)
+        sum=sum+sqrt(sqrt(lb[i])*la[i]*sqrt(lb[i]))
+    end
+    
+    return sum^2
+end
+
 
 
 ###########################################################################
