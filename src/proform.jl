@@ -10,6 +10,7 @@
 module proform
 
 using ITensors
+using LinearAlgebra;
 include("noteb.jl")
 include("parcing.jl")
 
