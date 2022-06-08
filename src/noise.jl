@@ -33,7 +33,7 @@ end
 function DPh_noise_1qb(e,G)
 
     indexs=inds(G)
-    g= (1-e)*myqcs.component_def.IGate(indexs[1],indexs[2]) + e*myqcs.component_def.ZGate(indexs[1],indexs[2])
+    g= (1-e)*component_def.IGate(indexs[1],indexs[2]) + e*component_def.ZGate(indexs[1],indexs[2])
     return g #Dag_mult(g,G,4)
 
 end
@@ -53,7 +53,7 @@ end
 function AD_noise_1qb(e,G)
 
     indexs=inds(G)
-    G=(1-e)*G+e*myqcs.component_def.IGate(indexs[1],indexs[2])
+    G=(1-e)*G+e*component_def.IGate(indexs[1],indexs[2])
     return G
     
 end
@@ -62,8 +62,8 @@ end
 function DPh_noise_2qb(e,G)
 
     indexs=inds(G)
-    g = (1-e)*myqcs.component_def.IGate(indexs[1],indexs[2]) + e*myqcs.component_def.ZGate(indexs[1],indexs[2])
-    g1 = (1-e)*myqcs.component_def.IGate(indexs[3],indexs[4]) + e*myqcs.component_def.ZGate(indexs[3],indexs[4])
+    g = (1-e)*component_def.IGate(indexs[1],indexs[2]) + e*component_def.ZGate(indexs[1],indexs[2])
+    g1 = (1-e)*component_def.IGate(indexs[3],indexs[4]) + e*component_def.ZGate(indexs[3],indexs[4])
     G1 = g*g1
     return G1 #Dag_mult(g,G,4)
 
@@ -73,7 +73,7 @@ end
 function AD_noise_2qb(e,G)
 
     indexs=inds(G)
-    G=(1-e)*G+e*myqcs.component_def.IGate(indexs[1],indexs[2])*myqcs.component_def.IGate(indexs[3],indexs[4])
+    G=(1-e)*G+e*component_def.IGate(indexs[1],indexs[2])*component_def.IGate(indexs[3],indexs[4])
     return G
     
 end
@@ -216,7 +216,12 @@ function add_nosie_ech(T,e)
     
 end
 
+
+#####################################################
+#
 # Master Noise adding function
+#
+######################################################
 function add_nosie(T,e)
     
     if length(e)==length(T.gates)
