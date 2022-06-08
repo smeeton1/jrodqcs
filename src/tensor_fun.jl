@@ -203,11 +203,12 @@ function simple_solver(T)
     n=length(T.init_state[1])
     m=length(T.gates)
     push!(T.out,T.init_state[1][1])
+    k=length(T.out)
     for i=2:n
-        T.out[1]=T.out[1]*T.init_state[1][i]
+        T.out[k]=T.out[k]*T.init_state[1][i]
     end
     for i=1:m
-        T.out[1]=T.out[1]*T.gates[i]
+        T.out[k]=T.out[k]*T.gates[i]
     end
     
     return T
