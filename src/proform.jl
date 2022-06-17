@@ -64,16 +64,21 @@ function fidelity(A,B)
     
     AM=parcing.makematrix(A)
     BM=parcing.makematrix(B)
-    la,va =eigen(AM, sortby = x -> -abs(x))
     lb,vb =eigen(BM, sortby = x -> -abs(x))
     
 
-    sum=0
-    for i=1:length(lb)
-        sum=sum+sqrt(sqrt(lb[i])*la[i]*sqrt(lb[i]))
-    end
     
-    return sum^2
+    for i=1:length(lb)
+        lb[i]=sqrt(sqrt(lb[i]*conj(lb[i])))
+    end
+    BM=vb*Diagonal(lb)*inv(vb)
+    AM=BM*AM*BM
+    lb,vb =eigen(AM, sortby = x -> -abs(x))
+    for i=1:length(lb)
+        lb[i]=sqrt(sqrt(lb[i]*conj(lb[i])))
+    end
+    AM=vb*Diagonal(lb)*inv(vb)
+    return real(sqrt(tr(AM)*conj(tr(AM))))
 end
 
 
@@ -104,7 +109,9 @@ end
 function add_2BG(T,shift,seed)
     
     N=Int(floor(T.qubit_N/2))
-    Random.seed!(seed)
+    if seed != -1
+        Random.seed!(seed)
+    end
     for i=1:N
         
         n=rand()
@@ -130,7 +137,9 @@ end
 
 # Adds a 1 qubit gate to each qubit
 function add_1BG(T,shift,seed)
-    Random.seed!(seed)
+    if seed != -1
+        Random.seed!(seed)
+    end
     for i=1:T.qubit_N 
         n=rand()
         
@@ -169,7 +178,7 @@ end
 # Q-G- -G-G-G- -G....
 #
 #Creates a circuit that has all the qubits connected.
-function Random_Circuit(T,Depth,seed=3)
+function Random_Circuit(T,Depth,seed=-1)
     
     shift=false
     
