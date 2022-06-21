@@ -22,6 +22,19 @@ function set_Aeth(i::Index, j::Index,e)
     A[i(2),j(2)] = sqrt(1-e)
     A[i(3),j(3)] = sqrt(1-e)
     A[i(4),j(4)] = 1-e
+    
+    return A
+    
+
+end
+
+function set_Aeth2(i::Index, j::Index,e)
+
+    A = ITensor(ComplexF64,i,j)
+    A[i(1),j(1)] = 1.0
+    A[i(2),j(2)] = 1.0
+    A[i(3),j(3)] = 1.0
+    A[i(4),j(4)] = 1.0
     A[i(1),j(4)] = e
     
     return A
@@ -40,11 +53,19 @@ end
 
 
 # Creates a depolarizing noise tensor.
-function DPo_noise_1qb(e,G)
+function DPo_noise_1qb1(e,G)
 
     indexs=inds(G)
     g=set_Aeth(indexs[1],indexs[2],e)
     return g #Mat_mult(G,g,4)
+
+end
+
+function DPo_noise_1qb2(e,G)
+
+    indexs=inds(G)
+    g =set_Aeth2(indexs[1],indexs[2],e)
+    return g#Mat_mult(G,g,4)
 
 end
 
@@ -53,7 +74,7 @@ end
 function AD_noise_1qb(e,G)
 
     indexs=inds(G)
-    G=(1-e)*G+e*component_def.IGate(indexs[1],indexs[2])
+    G=(1-e)*G+e/2*component_def.IGate(indexs[1],indexs[2])
     return G
     
 end
@@ -73,16 +94,24 @@ end
 function AD_noise_2qb(e,G)
 
     indexs=inds(G)
-    G=(1-e)*G+e*component_def.IGate(indexs[1],indexs[2])*component_def.IGate(indexs[3],indexs[4])
+    G=(1-e)*G+e/2*component_def.IGate(indexs[1],indexs[2])*component_def.IGate(indexs[3],indexs[4])
     return G
     
 end
 
 # Creates a depolarizing noise tensor for a 2 qubit gate.
-function DPo_noise_2qb(e,G)
+function DPo_noise_2qb1(e,G)
 
     indexs=inds(G)
     g=set_Aeth(indexs[1],indexs[2],e)*set_Aeth(indexs[3],indexs[4],e)
+    return g #Mat_mult(G,g,4)
+
+end
+
+function DPo_noise_2qb2(e,G)
+
+    indexs=inds(G)
+    g =set_Aeth2(indexs[1],indexs[2],e)*set_Aeth2(indexs[3],indexs[4],e)
     return g #Mat_mult(G,g,4)
 
 end
@@ -94,12 +123,24 @@ end
 ##################################################################################
 
 
-function noise_DPO(G,e)
+function noise_DPO1(G,e)
     
     if order(G) == 2
-        g = DPo_noise_1qb(e,G)
+        g = DPo_noise_1qb1(e,G)
     else
-        g = DPo_noise_2qb(e,G)
+        g = DPo_noise_2qb1(e,G)
+    end
+ 
+    return g
+    
+end
+
+function noise_DPO2(G,e)
+    
+    if order(G) == 2
+        g = DPo_noise_1qb2(e,G)
+    else
+        g = DPo_noise_2qb2(e,G)
     end
  
     return g
@@ -165,23 +206,25 @@ function add_nosie_gate(T,e,n)
     if length(e)==3
         if e[1]!=0
           push!(T.gates,nosie_DPH(T.gates[n],e[1]))
-          T.edge = fix_edge(T.edge,n,length(T.gates))
+          fix_edge(T.edge,n,length(T.gates),order(T.gates[n]))
         end
         if e[2]!=0
-          push!(T.gates,nosie_AD(T.gates[n],e[2])) 
+          push!(T.gates,noise_AD(T.gates[n],e[2])) 
         end
         if e[3]!=0
-          push!(T.gates,nosie_DPO(T.gates[n],e[3]))
-          T.edge = fix_edge(T.edge,n,length(T.gates))  
+          push!(T.gates,noise_DPO1(T.gates[n],e[3]))
+          fix_edge(T.edge,n,length(T.gates),order(T.gates[n]))
+          push!(T.gates,noise_DPO2(T.gates[n],e[3]))
+          fix_edge(T.edge,n,length(T.gates),order(T.gates[n]))
         end
         
     elseif length(e)==2
         if e[1]!=0
           push!(T.gates,nosie_DPH(T.gates[n],e[1]))
-          T.edge = fix_edge(T.edge,n,length(T.gates))
+          fix_edge(T.edge,n,length(T.gates),order(T.gates[n]))
         end
         if e[2]!=0
-          push!(T.gates,nosie_AD(T.gates[n],e[2]))  
+          push!(T.gates,noise_AD(T.gates[n],e[2]))  
         end
         
     else 
