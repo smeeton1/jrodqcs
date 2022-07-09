@@ -9,3 +9,5 @@ The circuit can be built using commands or by reading in an OpenQASM file. the u
 Noise can be added to the density matrices. The noise can be added uniformly or can be specify for each gate.
 
 Example for the use of the package can be found in the nb folder.
+
+The package uses the libraries ITensors, Random, DelimitedFiles
