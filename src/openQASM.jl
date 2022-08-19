@@ -746,7 +746,7 @@ function create_networkinputs(a,c,r,g,v=false)
     noteb.Set_cinit(A,cinit);
     #println(A)
     noteb.Add_gate(A,gate,qbit);
-    A.verbose=v;
+    #A.verbose=v;
     return A
 end
 

@@ -1,6 +1,6 @@
-# myqcs
+# jrodqcs
 
-myqcs is a quantum circuit simulator written in Julia.
+jrodqcs is a quantum circuit simulator written in Julia.
 
 The package is developed to work in the jupyter notebook. 
 
